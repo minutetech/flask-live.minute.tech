@@ -982,8 +982,6 @@ def tech_register_page():
 	error = ''
 	global tech_signed_in
 	try:
-		os.chdir('../')
-		flash(os.getcwd())
 		form = TechRegistrationForm(request.form)
 		if request.method == "POST" and form.validate():
 			techfirst_name = form.techfirst_name.data
@@ -1045,9 +1043,9 @@ def tech_register_page():
 def return_file():
 	#On locally hosted setups, this will not work because it needs to be in the proper directory
 	#Not sure how to get this to work locally and remotely with the backslashes and forward slashes difference
-	#os.chdir('C:\Users\Dougroot\Python27\Projects\minutetech-flask')
+	os.chdir('C:\Users\Dougroot\Python27\Projects\minutetech-flask\static\legal\\')
 	#return send_file('static\legal\MinutetechLLC_tos.pdf', attachment_filename='MinutetechLLC_tos.pdf')
-	return send_file('/var/www/FlaskApp/FlaskApp/static/legal/MinutetechLLC_tos.pdf', attachment_filename='MinutetechLLC_tos.pdf')
+	return send_file('MinutetechLLC_tos.pdf', attachment_filename='MinutetechLLC_tos.pdf')
 
     
 ############################################ END ACCOUNT SYSTEM #########################################################
