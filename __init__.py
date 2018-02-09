@@ -633,41 +633,41 @@ def techaccount():
 #### PROFILE PIC UPLOAD ####
 # Based after https://gist.github.com/greyli/81d7e5ae6c9baf7f6cdfbf64e8a7c037
 # For uploading files
-# TECH_PROF_PIC_UPLOAD_FOLDER = 'static/tech_user_info/prof_pic'
-# ALLOWED_EXTENSIONS = set(['png', 'jpg', 'jpeg', 'gif'])
-# app.config['TECH_UPLOADED_PHOTOS_DEST'] = os.getcwd()
-# photos = UploadSet('photos', IMAGES)
-# configure_uploads(app, photos)
-# patch_request_class(app)  # set maximum file size, default is 16MB
+TECH_PROF_PIC_UPLOAD_FOLDER = 'static/tech_user_info/prof_pic'
+ALLOWED_EXTENSIONS = set(['png', 'jpg', 'jpeg', 'gif'])
+app.config['TECH_UPLOADED_PHOTOS_DEST'] = os.getcwd()
+photos = UploadSet('photos', IMAGES)
+configure_uploads(app, photos)
+patch_request_class(app)  # set maximum file size, default is 16MB
 
-# class TechProfilePictureForm(FlaskForm):
-# 	techprof_pic = FileField(validators=[FileAllowed(photos, u'Image only!')])
+class TechProfilePictureForm(FlaskForm):
+	techprof_pic = FileField(validators=[FileAllowed(photos, u'Image only!')])
 
-# @app.route('/tech_profile_picture_upload/', methods=['GET','POST'])
-# def tech_profile_picture_upload():
-# 	form = TechProfilePictureForm()
-# 	techtid = str(session['techtid'])
-# 	techfirst_name = session['techfirst_name']
-# 	default_prof_pic = url_for('static', filename='user_info/prof_pic/default.jpg')
-# 	user_prof_pic = techtid+'_'+techfirst_name+'_'+'.png'
-# 	if form.validate_on_submit():
-# 		filename = photos.save(form.techprof_pic.data, folder=TECH_PROF_PIC_UPLOAD_FOLDER,name=techtid+'_'+techfirst_name+'_'+'.png')
-# 		file_url = photos.url(filename)
-# 		# Checks if the prof_pic is set yet. if set, then dont need to delete the old picture on the server
-# 		# if session['techprof_pic'] != 'http://138.68.238.112/var/www/FlaskApp/FlaskApp/_uploads/photos/static/tech_user_info/prof_pic/default.jpg':
-# 		# 	#need to delete or move the old prof_pic if it was set! Prevents users from adding too many pictures
-# 		# 	flash("You already have a file on the server!")
-# 		#If the user_prof_pic is there, then  
-# 		session['techprof_pic'] = file_url
-# 		c, conn = connection()
-# 		c.execute("UPDATE tpersonals SET prof_pic = %s WHERE tid = (%s)", (file_url, techtid))
-# 		conn.commit()
-# 		c.close()
-# 		conn.close()
-# 	else:
-# 		file_url = None
+@app.route('/tech_profile_picture_upload/', methods=['GET','POST'])
+def tech_profile_picture_upload():
+	form = TechProfilePictureForm()
+	techtid = str(session['techtid'])
+	techfirst_name = session['techfirst_name']
+	default_prof_pic = url_for('static', filename='user_info/prof_pic/default.jpg')
+	user_prof_pic = techtid+'_'+techfirst_name+'_'+'.png'
+	if form.validate_on_submit():
+		filename = photos.save(form.techprof_pic.data, folder=TECH_PROF_PIC_UPLOAD_FOLDER,name=techtid+'_'+techfirst_name+'_'+'.png')
+		file_url = photos.url(filename)
+		# Checks if the prof_pic is set yet. if set, then dont need to delete the old picture on the server
+		# if session['techprof_pic'] != 'http://138.68.238.112/var/www/FlaskApp/FlaskApp/_uploads/photos/static/tech_user_info/prof_pic/default.jpg':
+		# 	#need to delete or move the old prof_pic if it was set! Prevents users from adding too many pictures
+		# 	flash("You already have a file on the server!")
+		#If the user_prof_pic is there, then  
+		session['techprof_pic'] = file_url
+		c, conn = connection()
+		c.execute("UPDATE tpersonals SET prof_pic = %s WHERE tid = (%s)", (file_url, techtid))
+		conn.commit()
+		c.close()
+		conn.close()
+	else:
+		file_url = None
 
-# 	return render_template('tech_profile_picture_upload.html', form=form, file_url=file_url)
+	return render_template('tech_profile_picture_upload.html', form=form, file_url=file_url)
 
 def login_required(f):
     #not 100% how this works
@@ -982,6 +982,7 @@ def tech_register_page():
 	error = ''
 	global tech_signed_in
 	try:
+		flash(os.getcwd())
 		form = TechRegistrationForm(request.form)
 		if request.method == "POST" and form.validate():
 			techfirst_name = form.techfirst_name.data
@@ -1041,10 +1042,14 @@ def tech_register_page():
 
 @app.route('/MinutetechLLC_tos/')
 def return_file():
+	#On locally hosted setups, this will not work because it needs to be in the proper directory
+	#Not sure how to get this to work locally and remotely with the backslashes and forward slashes difference
+	#os.chdir('C:\Users\Dougroot\Python27\Projects\minutetech-flask')
+	#return send_file('static\legal\MinutetechLLC_tos.pdf', attachment_filename='MinutetechLLC_tos.pdf')
 	return send_file('/var/www/FlaskApp/FlaskApp/static/legal/MinutetechLLC_tos.pdf', attachment_filename='MinutetechLLC_tos.pdf')
 
     
 ############################################ END ACCOUNT SYSTEM #########################################################
 
 if __name__ == "__main__":
-    app.run()
+    app.run(debug=True)

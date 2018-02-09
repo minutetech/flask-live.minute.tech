@@ -153,6 +153,9 @@ $ rm -rf filename.txt
 List all files (even hidden) in current directory
 $ ls -a
 
+Remove- cached folder from git 
+$ git rm -r --cached myFolder
+
 -Branching is used when adding features, but need to do unit testing before merging with master branch.
 -Branches are normally deleted after merging because they are no longer adding those features
 
