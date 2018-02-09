@@ -453,10 +453,9 @@ def account():
 # Based after https://gist.github.com/greyli/81d7e5ae6c9baf7f6cdfbf64e8a7c037
 # For uploading files
 
-PROF_PIC_UPLOAD_FOLDER = '/var/www/FlaskApp/FlaskApp/static/user_info/prof_pic'
 ALLOWED_EXTENSIONS = set(['png', 'jpg', 'jpeg', 'gif'])
 # /var/www/FlaskApp/FlaskApp/static/legal/MinutetechLLC_tos.pdf
-app.config['UPLOADED_PHOTOS_DEST'] = os.getcwd()
+app.config['UPLOADED_PHOTOS_DEST'] = 'static/user_info/prof_pic'
 photos = UploadSet('photos', IMAGES)
 configure_uploads(app, photos)
 patch_request_class(app)  # set maximum file size, default is 16MB
@@ -472,7 +471,7 @@ def profile_picture_upload():
 	#default_prof_pic = 'app/uploads/photos/static/user_info/prof_pic/default.jpg'
 	user_prof_pic = cid+'_'+first_name+'_'+'.png'
 	if form.validate_on_submit():
-		filename = photos.save(form.prof_pic.data, folder=PROF_PIC_UPLOAD_FOLDER,name=cid+'_'+first_name+'_'+'.png')
+		filename = photos.save(form.prof_pic.data, name=cid+'_'+first_name+'_'+'.png')
 		file_url = photos.url(filename)
 		# Checks if the prof_pic is set yet. if set, then dont need to delete the old picture on the server
 		# if session['prof_pic'] != 'http://138.68.238.112/static/user_info/prof_pic/default.jpg':
@@ -1043,7 +1042,7 @@ def tech_register_page():
 def return_file():
 	#changing the directory does not effect the remote environement, the command doesnt even seem to go through
 	#so I have this here so that when on a local environment, it changes to the proper place so it can pull this file
-	#os.chdir('C:\Users\Dougroot\Python27\Projects\minutetech-flask\static\legal\\')
+	os.chdir('C:\Users\Dougroot\Python27\Projects\minutetech-flask\static\legal\\')
 	#return send_file('static\legal\MinutetechLLC_tos.pdf', attachment_filename='MinutetechLLC_tos.pdf')
 	return send_file('MinutetechLLC_tos.pdf', attachment_filename='MinutetechLLC_tos.pdf')
 
