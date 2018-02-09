@@ -31,7 +31,7 @@ application.secret_key = 'quincyisthebestdog11'
 
 -Used this to setup virtual environment (https://www.twilio.com/docs/guides/how-to-set-up-your-python-and-flask-development-environment#start-a-new-project-with-virtualenv)
 -In order to play with virtual environment, you must navigate to that directory, such as 
-$ cd C:\Users\Dougroot\Python\Projects\minutetech
+$ cd C:\Users\Dougroot\Python27\Projects\minutetech-flask
 
 # Create a new virtualenv named "minutetech"
 $ virtualenv minutetech
@@ -39,7 +39,7 @@ New python executable in minutetech/bin/python
 Installing setuptools, pip, wheel...done.
 
 # Activate the virtualenv (Windows)
-$ minutetech\Scripts\activate
+$ venv\Scripts\activate
 
 -Must install required libraries such as...
 $ pip install Flask
@@ -55,6 +55,9 @@ $ pip install mysqlclient
 FIXED:
 -Need to use Python Version 2.7.14 cuz that's how I set it up initially
 -To install the mysqlclient library, go through here (https://www.lfd.uci.edu/~gohlke/pythonlibs/#mysqlclient) and get the 27 version for windows
+Put the .whl file in a folder
+$ cd C:\Users\Dougroot\Python27\Projects\minutetech-flask\venv\Lib\site-packages
+Then install
 $ pip install mysqlclient-1.3.12-cp27-cp27m-win_amd64.whl
 -Not sure if these same issues would arise outside of a Windows installation
 
