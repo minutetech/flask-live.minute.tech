@@ -982,6 +982,7 @@ def tech_register_page():
 	error = ''
 	global tech_signed_in
 	try:
+		os.chdir('../')
 		flash(os.getcwd())
 		form = TechRegistrationForm(request.form)
 		if request.method == "POST" and form.validate():
