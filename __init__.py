@@ -1041,9 +1041,9 @@ def tech_register_page():
 
 @app.route('/MinutetechLLC_tos/')
 def return_file():
-	#On locally hosted setups, this will not work because it needs to be in the proper directory
-	#Not sure how to get this to work locally and remotely with the backslashes and forward slashes difference
-	os.chdir('C:\Users\Dougroot\Python27\Projects\minutetech-flask\static\legal\\')
+	#changing the directory does not effect the remote environement, the command doesnt even seem to go through
+	#so I have this here so that when on a local environment, it changes to the proper place so it can pull this file
+	#os.chdir('C:\Users\Dougroot\Python27\Projects\minutetech-flask\static\legal\\')
 	#return send_file('static\legal\MinutetechLLC_tos.pdf', attachment_filename='MinutetechLLC_tos.pdf')
 	return send_file('MinutetechLLC_tos.pdf', attachment_filename='MinutetechLLC_tos.pdf')
 
