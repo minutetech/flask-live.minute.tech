@@ -206,6 +206,7 @@ def pending():
 	error = ''
 	try:
 		c, conn = connection()
+		flash(session['prof_pic'])
 		if request.method == "POST":
 			cid = session['clientcid']
 			c.execute("UPDATE cpersonals SET launch_email = 1 WHERE cid = (%s)", (cid,))
@@ -469,15 +470,15 @@ def profile_picture_upload():
 	cid = str(session['clientcid'])
 	first_name = session['first_name']
 	#default_prof_pic = 'app/uploads/photos/static/user_info/prof_pic/default.jpg'
-	user_prof_pic = cid+'_'+first_name+'_'+'.png'
+	#user_prof_pic = cid+'_'+first_name+'_'+'.png'
 	if form.validate_on_submit():
-		filename = photos.save(form.prof_pic.data, name=cid+'_'+first_name+'_'+'.png')
-		file_url = photos.url(filename)
 		# Checks if the prof_pic is set yet. if set, then dont need to delete the old picture on the server
-		# if session['prof_pic'] != 'http://138.68.238.112/static/user_info/prof_pic/default.jpg':
-		# 	#need to delete or move the old prof_pic if it was set! Prevents users from adding too many pictures
-		# 	flash("You already have a file on the server!")
-		#If the user_prof_pic is there, then  
+		if session['prof_pic'] != url_for('static', filename='user_info/prof_pic/default.jpg'):
+			#need to delete or move the old prof_pic if it was set! Prevents users from adding too many pictures
+			os.remove('static/user_info/prof_pic/'+cid+'_'+first_name+'.png')
+			flash("You already have a file on the server!")
+		filename = photos.save(form.prof_pic.data, name=cid+'_'+first_name+'.png')
+		file_url = photos.url(filename) 
 		session['prof_pic'] = file_url
 		c, conn = connection()
 		c.execute("UPDATE cpersonals SET prof_pic = %s WHERE cid = (%s)", (file_url, cid))
