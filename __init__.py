@@ -29,7 +29,7 @@ from functools import wraps
 from dbconnect import connection
 # UPLOAD_FOLDER = '/var/www/FlaskApp/FlaskApp/static/user_info/prof_pic'
 # ALLOWED_EXTENSIONS = set(['png','jpg','jpeg','gif'])
-app = Flask(__name__)
+app = Flask(__name__, static_folder='static')
 # app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 # Key cross-referenced from flaskapp.wsgi
 app.config['SECRET_KEY'] = 'quincyisthebestdog11'
@@ -455,7 +455,7 @@ def account():
 
 ALLOWED_EXTENSIONS = set(['png', 'jpg', 'jpeg', 'gif'])
 # /var/www/FlaskApp/FlaskApp/static/legal/MinutetechLLC_tos.pdf
-app.config['UPLOADED_PHOTOS_DEST'] = url_for('static', filename='user_info/prof_pic/')
+app.config['UPLOADED_PHOTOS_DEST'] = 'static/user_info/prof_pic'
 photos = UploadSet('photos', IMAGES)
 configure_uploads(app, photos)
 patch_request_class(app)  # set maximum file size, default is 16MB
@@ -1042,6 +1042,7 @@ def tech_register_page():
 def return_file():
 	#changing the directory does not effect the remote environement, the command doesnt even seem to go through
 	#so I have this here so that when on a local environment, it changes to the proper place so it can pull this file
+	#perhaps try and replace with this (https://stackoverflow.com/questions/17681762/unable-to-retrieve-files-from-send-from-directory-in-flask)
 	os.chdir('C:\Users\Dougroot\Python27\Projects\minutetech-flask\static\legal\\')
 	#return send_file('static\legal\MinutetechLLC_tos.pdf', attachment_filename='MinutetechLLC_tos.pdf')
 	return send_file('MinutetechLLC_tos.pdf', attachment_filename='MinutetechLLC_tos.pdf')
