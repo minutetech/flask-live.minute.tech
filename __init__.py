@@ -455,7 +455,7 @@ def account():
 
 ALLOWED_EXTENSIONS = set(['png', 'jpg', 'jpeg', 'gif'])
 # /var/www/FlaskApp/FlaskApp/static/legal/MinutetechLLC_tos.pdf
-app.config['UPLOADED_PHOTOS_DEST'] = os.getcwd() + '/static/user_info/prof_pic'
+app.config['UPLOADED_PHOTOS_DEST'] = 'static/user_info/prof_pic'
 photos = UploadSet('photos', IMAGES)
 configure_uploads(app, photos)
 patch_request_class(app)  # set maximum file size, default is 16MB
@@ -629,44 +629,44 @@ def techaccount():
 	except Exception as e:
 		return render_template("500.html", error = e)
 
-#### PROFILE PIC UPLOAD ####
-# Based after https://gist.github.com/greyli/81d7e5ae6c9baf7f6cdfbf64e8a7c037
-# For uploading files
-TECH_PROF_PIC_UPLOAD_FOLDER = 'static/tech_user_info/prof_pic'
-ALLOWED_EXTENSIONS = set(['png', 'jpg', 'jpeg', 'gif'])
-app.config['TECH_UPLOADED_PHOTOS_DEST'] = os.getcwd()
-photos = UploadSet('photos', IMAGES)
-configure_uploads(app, photos)
-patch_request_class(app)  # set maximum file size, default is 16MB
+# #### PROFILE PIC UPLOAD ####
+# # Based after https://gist.github.com/greyli/81d7e5ae6c9baf7f6cdfbf64e8a7c037
+# # For uploading files
+# TECH_PROF_PIC_UPLOAD_FOLDER = 'static/tech_user_info/prof_pic'
+# ALLOWED_EXTENSIONS = set(['png', 'jpg', 'jpeg', 'gif'])
+# app.config['TECH_UPLOADED_PHOTOS_DEST'] = os.getcwd()
+# photos = UploadSet('photos', IMAGES)
+# configure_uploads(app, photos)
+# patch_request_class(app)  # set maximum file size, default is 16MB
 
-class TechProfilePictureForm(FlaskForm):
-	techprof_pic = FileField(validators=[FileAllowed(photos, u'Image only!')])
+# class TechProfilePictureForm(FlaskForm):
+# 	techprof_pic = FileField(validators=[FileAllowed(photos, u'Image only!')])
 
-@app.route('/tech_profile_picture_upload/', methods=['GET','POST'])
-def tech_profile_picture_upload():
-	form = TechProfilePictureForm()
-	techtid = str(session['techtid'])
-	techfirst_name = session['techfirst_name']
-	default_prof_pic = url_for('static', filename='user_info/prof_pic/default.jpg')
-	user_prof_pic = techtid+'_'+techfirst_name+'_'+'.png'
-	if form.validate_on_submit():
-		filename = photos.save(form.techprof_pic.data, folder=TECH_PROF_PIC_UPLOAD_FOLDER,name=techtid+'_'+techfirst_name+'_'+'.png')
-		file_url = photos.url(filename)
-		# Checks if the prof_pic is set yet. if set, then dont need to delete the old picture on the server
-		# if session['techprof_pic'] != 'http://138.68.238.112/var/www/FlaskApp/FlaskApp/_uploads/photos/static/tech_user_info/prof_pic/default.jpg':
-		# 	#need to delete or move the old prof_pic if it was set! Prevents users from adding too many pictures
-		# 	flash("You already have a file on the server!")
-		#If the user_prof_pic is there, then  
-		session['techprof_pic'] = file_url
-		c, conn = connection()
-		c.execute("UPDATE tpersonals SET prof_pic = %s WHERE tid = (%s)", (file_url, techtid))
-		conn.commit()
-		c.close()
-		conn.close()
-	else:
-		file_url = None
+# @app.route('/tech_profile_picture_upload/', methods=['GET','POST'])
+# def tech_profile_picture_upload():
+# 	form = TechProfilePictureForm()
+# 	techtid = str(session['techtid'])
+# 	techfirst_name = session['techfirst_name']
+# 	default_prof_pic = url_for('static', filename='user_info/prof_pic/default.jpg')
+# 	user_prof_pic = techtid+'_'+techfirst_name+'_'+'.png'
+# 	if form.validate_on_submit():
+# 		filename = photos.save(form.techprof_pic.data, folder=TECH_PROF_PIC_UPLOAD_FOLDER,name=techtid+'_'+techfirst_name+'_'+'.png')
+# 		file_url = photos.url(filename)
+# 		# Checks if the prof_pic is set yet. if set, then dont need to delete the old picture on the server
+# 		# if session['techprof_pic'] != 'http://138.68.238.112/var/www/FlaskApp/FlaskApp/_uploads/photos/static/tech_user_info/prof_pic/default.jpg':
+# 		# 	#need to delete or move the old prof_pic if it was set! Prevents users from adding too many pictures
+# 		# 	flash("You already have a file on the server!")
+# 		#If the user_prof_pic is there, then  
+# 		session['techprof_pic'] = file_url
+# 		c, conn = connection()
+# 		c.execute("UPDATE tpersonals SET prof_pic = %s WHERE tid = (%s)", (file_url, techtid))
+# 		conn.commit()
+# 		c.close()
+# 		conn.close()
+# 	else:
+# 		file_url = None
 
-	return render_template('tech_profile_picture_upload.html', form=form, file_url=file_url)
+# 	return render_template('tech_profile_picture_upload.html', form=form, file_url=file_url)
 
 def login_required(f):
     #not 100% how this works
