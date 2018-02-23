@@ -172,3 +172,25 @@ $ getent passwd | cut -d':' -f1
 *flaskapp.wsgi file needs to be in webapp main folder (at least)
 
 *Importing files from different folder: https://stackoverflow.com/questions/4383571/importing-files-from-different-folder
+
+
+
+
+
+
+
+============================================
+Once working...
+
+$ C:\Users\Dougroot>cd Python27\Projects\minutetech-flask\venv\Scripts
+
+$ C:\Users\Dougroot\Python27\Projects\minutetech-flask\venv\Scripts>Activate
+
+$ (minutetech) C:\Users\Dougroot\Python27\Projects\minutetech-flask\venv\Scripts>cd ../../
+
+$ (minutetech) C:\Users\Dougroot\Python27\Projects\minutetech-flask\> python __init__.py
+
+* Restarting with stat
+* Debugger is active!
+* Debugger PIN: 347-956-374
+* Running on http://127.0.0.1:5000/ (Press CTRL+C to quit)

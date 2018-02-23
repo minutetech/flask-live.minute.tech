@@ -38,8 +38,6 @@ app.config['SECRET_KEY'] = 'quincyisthebestdog11'
 # For selecting question from list
 select_q = 0
 # Checking if session.logged_in is set after a successfully login
-client_signed_in = 0
-tech_signed_in = 0
 password_confirm = 0
 tech_password_confirm = 0
 
@@ -327,7 +325,6 @@ class EditAccountForm(Form):
 @app.route('/account/', methods=['GET','POST'])
 def account():
 	error = ''
-	global client_signed_in
 	try:
 		# Declare form early on, so the form is referenced before assignment
 		form = EditAccountForm(request.form)
@@ -414,13 +411,12 @@ def account():
 				# Could show and hide it with uk-disabled
 				# 
 
-				# #check if email already exists
-				# x = c.execute("SELECT * FROM clients WHERE email = (%s)", (thwart(email),))
-				# if int(x) > 0 and form.email.data:
-				# 	#redirect them if they need to recover an old email from and old account
-				# 	client_signed_in = 1
-				# 	flash("That email already has an account, please try a a different email.")
-				# 	return render_template('account.html', form=form)
+				#check if email already exists
+				x = c.execute("SELECT * FROM clients WHERE email = (%s)", (thwart(email),))
+				if int(x) > 0 and form.email.data:
+					#redirect them if they need to recover an old email from and old account
+					flash("That email already has an account, please try a a different email.")
+					return render_template('account.html', form=form)
 
 				c.execute("UPDATE clients SET email = %s, phone = %s WHERE cid = (%s)", (email, phone, clientcid))
 				c.execute("UPDATE cpersonals SET first_name = %s, last_name = %s, address = %s, city = %s, state = %s, zip = %s, birth_month = %s, birth_day = %s, birth_year = %s, bio = %s WHERE cid = (%s)", (thwart(first_name), thwart(last_name), thwart(address), thwart(city), thwart(state), thwart(czip), birth_month, birth_day, birth_year, bio, clientcid))
@@ -439,7 +435,6 @@ def account():
 				session['birth_day'] = birth_day
 				session['birth_year'] = birth_year
 				session['bio'] = bio
-				client_signed_in = 1
 				flash("Your account is successfully updated.")
 				return redirect(url_for('account'))
 		else:
@@ -450,48 +445,48 @@ def account():
 	except Exception as e:
 		return render_template("500.html", error = e)
 
-#### PROFILE PIC UPLOAD ####
-# Based after https://gist.github.com/greyli/81d7e5ae6c9baf7f6cdfbf64e8a7c037
-# For uploading files
+# #### PROFILE PIC UPLOAD ####
+# # Based after https://gist.github.com/greyli/81d7e5ae6c9baf7f6cdfbf64e8a7c037
+# # For uploading files
 
-ALLOWED_EXTENSIONS = set(['png', 'jpg', 'jpeg', 'gif'])
-# /var/www/FlaskApp/FlaskApp/static/legal/MinutetechLLC_tos.pdf
-app.config['UPLOADED_PHOTOS_DEST'] = 'static/user_info/prof_pic'
-photos = UploadSet('photos', IMAGES)
-configure_uploads(app, photos)
-patch_request_class(app)  # set maximum file size, default is 16MB
+# ALLOWED_EXTENSIONS = set(['png', 'jpg', 'jpeg', 'gif'])
+# # /var/www/FlaskApp/FlaskApp/static/legal/MinutetechLLC_tos.pdf
+# app.config['UPLOADED_PHOTOS_DEST'] = 'static/user_info/prof_pic'
+# photos = UploadSet('photos', IMAGES)
+# configure_uploads(app, photos)
+# patch_request_class(app)  # set maximum file size, default is 16MB
 
-class ProfilePictureForm(FlaskForm):
-	prof_pic = FileField(validators=[FileAllowed(photos, u'Image only!')])
+# class ProfilePictureForm(FlaskForm):
+# 	prof_pic = FileField(validators=[FileAllowed(photos, u'Image only!')])
 
-@app.route('/profile_picture_upload/', methods=['GET','POST'])
-def profile_picture_upload():
-	form = ProfilePictureForm()
-	cid = str(session['clientcid'])
-	first_name = session['first_name']
-	#default_prof_pic = 'app/uploads/photos/static/user_info/prof_pic/default.jpg'
-	#user_prof_pic = cid+'_'+first_name+'_'+'.png'
-	if form.validate_on_submit():
-		# Checks if the prof_pic is set yet. if set, then dont need to delete the old picture on the server
-		if session['prof_pic'] != url_for('static', filename='user_info/prof_pic/default.jpg'):
-			#need to delete or move the old prof_pic if it was set! Prevents users from adding too many pictures
-			os.remove('static/user_info/prof_pic/'+cid+'_'+first_name+'.png')
-			flash("You already have a file on the server!")
-		filename = photos.save(form.prof_pic.data, name=cid+'_'+first_name+'.png')
-		file_url = photos.url(filename) 
-		session['prof_pic'] = file_url
-		c, conn = connection()
-		c.execute("UPDATE cpersonals SET prof_pic = %s WHERE cid = (%s)", (file_url, cid))
+# @app.route('/profile_picture_upload/', methods=['GET','POST'])
+# def profile_picture_upload():
+# 	form = ProfilePictureForm()
+# 	cid = str(session['clientcid'])
+# 	first_name = session['first_name']
+# 	#default_prof_pic = 'app/uploads/photos/static/user_info/prof_pic/default.jpg'
+# 	#user_prof_pic = cid+'_'+first_name+'_'+'.png'
+# 	if form.validate_on_submit():
+# 		# Checks if the prof_pic is set yet. if set, then dont need to delete the old picture on the server
+# 		if session['prof_pic'] != url_for('static', filename='user_info/prof_pic/default.jpg'):
+# 			#need to delete or move the old prof_pic if it was set! Prevents users from adding too many pictures
+# 			os.remove('static/user_info/prof_pic/'+cid+'_'+first_name+'.png')
+# 			flash("You already have a file on the server!")
+# 		filename = photos.save(form.prof_pic.data, name=cid+'_'+first_name+'.png')
+# 		file_url = photos.url(filename) 
+# 		session['prof_pic'] = file_url
+# 		c, conn = connection()
+# 		c.execute("UPDATE cpersonals SET prof_pic = %s WHERE cid = (%s)", (file_url, cid))
 
-		conn.commit()
-		c.close()
-		conn.close()
-	else:
-		file_url = None
+# 		conn.commit()
+# 		c.close()
+# 		conn.close()
+# 	else:
+# 		file_url = None
 
-	return render_template('profile_picture_upload.html', form=form, file_url=file_url)
+# 	return render_template('profile_picture_upload.html', form=form, file_url=file_url)
 
-#### END PROFILE PIC UPLOAD ####
+# #### END PROFILE PIC UPLOAD ####
 
 # TECH ACCOUNT
 class TechEditAccountForm(Form):
@@ -513,7 +508,6 @@ class TechEditAccountForm(Form):
 def techaccount():
 	error = ''
 	# Using this global variable is tough because each time I redirect, even to the same page, it forgets the value. Make it a session varaible maybe?
-	global tech_signed_in
 	try:
 		# Declare form early on, so the form is referenced before assignment
 		form = TechEditAccountForm(request.form)
@@ -596,7 +590,6 @@ def techaccount():
 				# x = c.execute("SELECT * FROM technicians WHERE email = (%s) EXCEPT (%s)", (thwart(techemail), email_check))
 				# if int(x) > 0:
 				# 	#redirect them if they need to recover an old email from and old account
-				# 	tech_signed_in = 1
 				# 	flash("That email already has an account, please try a a different email.")
 				# 	return render_template('techaccount.html', form=form)
 
@@ -618,7 +611,6 @@ def techaccount():
 				session['techbirth_year'] = techbirth_year
 				session['techbio'] = techbio
 				flash("Your account is successfully updated.")
-				tech_signed_in = 1
 				return redirect(url_for('techaccount'))
 
 		else:
@@ -629,6 +621,32 @@ def techaccount():
 
 	except Exception as e:
 		return render_template("500.html", error = e)
+
+@app.route('/tech_duties/', methods=['GET','POST'])
+def tech_duties():
+	return render_template("tech_duties.html")
+	
+#CLIENT REGISTER
+class TechSignatureForm(Form):
+    signature = TextField('Signature (Please enter your full name)', [validators.Length(min=2, max=100)])
+
+@app.route('/tech_signature/', methods=['GET','POST'])
+def tech_signature():
+	form = TechSignatureForm(request.form)
+	if request.method == "POST" and form.validate():
+		signature = form.signature.data
+		techtid = session['techtid']
+		c, conn = connection()
+		c.execute("UPDATE tpersonals SET signature = %s WHERE tid = (%s)", (thwart(signature), techtid))
+		conn.commit()
+		c.close()
+		conn.close()
+		flash("Submission successful. We will contact you soon.")
+		return redirect(url_for('techaccount'))
+
+	else:
+		error = "Please enter your name!"
+		return render_template("tech_signature.html", form=form)
 
 # #### PROFILE PIC UPLOAD ####
 # # Based after https://gist.github.com/greyli/81d7e5ae6c9baf7f6cdfbf64e8a7c037
@@ -685,10 +703,6 @@ def login_required(f):
 @app.route('/logout/', methods=['GET','POST'])
 @login_required
 def logout():
-	global client_signed_in
-	global tech_signed_in
-	client_signed_in = 0
-	tech_signed_in = 0
 	session.clear()
 	flash("You have been logged out!")
 	return redirect(url_for('homepage'))
@@ -698,7 +712,6 @@ def logout():
 @app.route('/login/', methods=['GET','POST'])
 def login_page():
     error = ''
-    global client_signed_in
     try:
         c, conn = connection()
         if request.method == "POST":
@@ -714,7 +727,6 @@ def login_page():
                 conn.close()
                 session['logged_in'] = 'client'
                 session['email'] = thwart(email)
-                client_signed_in = 1
                 flash("You are now logged in.")
                 return redirect(url_for("account"))
             
@@ -798,7 +810,6 @@ def password_reset():
 @app.route('/techlogin/', methods=['GET','POST'])
 def tech_login_page():
     error = ''
-    global tech_signed_in
     try:
         c, conn = connection()
         if request.method == "POST":
@@ -814,7 +825,6 @@ def tech_login_page():
                 conn.close()
                 session['logged_in'] = 'tech'
                 session['techemail'] = thwart(techemail)
-                tech_signed_in = 1
                 flash("You are now logged in.")
                 return redirect(url_for("techaccount"))
             
@@ -825,7 +835,7 @@ def tech_login_page():
         
     except Exception as e:
         #flash(e)
-        error = "Invalid credentials, try again."
+        error = e
         return render_template("techlogin.html", error = error)
 
 #PASSWORD CONFIRM
@@ -856,12 +866,12 @@ def tech_password_confirm():
         
     except Exception as e:
         #flash(e)
-        error = "Invalid credentials, try again."
+        error = e
         return render_template("tech_password_confirm.html", error = error)
 
 #CLIENT REGISTER
 class TechPasswordResetForm(Form):
-    techpassword = PasswordField('Password', [validators.Required(), validators.EqualTo('confirm', message ="Passwords must match.")])
+    techpassword = PasswordField('Password', [validators.Required(), validators.EqualTo('techconfirm', message ="Passwords must match.")])
     techconfirm = PasswordField('Repeat Password')
 
 # PASSWORD RESET
@@ -873,10 +883,10 @@ def tech_password_reset():
 		if tech_password_confirm == 1:
 			form = TechPasswordResetForm(request.form)
 			if request.method == "POST" and form.validate():
-				techtid = session['techtid']
+				tid = session['techtid']
 				techpassword = sha256_crypt.encrypt((str(form.techpassword.data)))
 				c, conn = connection()
-				c.execute("UPDATE technicians SET password = %s WHERE tid = (%s)", (thwart(techpassword), techtid))
+				c.execute("UPDATE technicians SET password = %s WHERE tid = (%s)", (thwart(techpassword), tid))
 				conn.commit()
 				flash("Password successfully changed!")
 				c.close()
@@ -887,7 +897,7 @@ def tech_password_reset():
 
 			return render_template("tech_password_reset.html", form=form)
 		else:
-			flash("Not permitted.")
+			flash(tech_password_confirm)
 			return redirect(url_for('homepage'))
 
 	except Exception as e:
@@ -906,7 +916,6 @@ class RegistrationForm(Form):
 @app.route('/register/', methods=['GET','POST'])
 def register_page():
 	error = ''
-	global client_signed_in
 	try:
 		form = RegistrationForm(request.form)
 		if request.method == "POST" and form.validate():
@@ -954,7 +963,6 @@ def register_page():
 				session['bio'] = bio
 				#change this when the server goes live to the proper folder
 				session['prof_pic'] = default_prof_pic
-				client_signed_in = 1
 				return redirect(url_for('account'))
 
 		return render_template("register.html", form=form)
@@ -980,7 +988,6 @@ class TechRegistrationForm(Form):
 @app.route('/techregister/', methods=['GET','POST'])
 def tech_register_page():
 	error = ''
-	global tech_signed_in
 	try:
 		form = TechRegistrationForm(request.form)
 		if request.method == "POST" and form.validate():
@@ -1027,7 +1034,6 @@ def tech_register_page():
 				session['techbio'] = techbio
 				#change this when the server goes live to the proper folder
 				session['techprof_pic'] = default_prof_pic
-				tech_signed_in = 1
 				return redirect(url_for('techaccount'))
 
 		return render_template("techregister.html", form=form)

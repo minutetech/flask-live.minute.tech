@@ -18,14 +18,9 @@
 			    <li>
 			    	{% from "_formhelpers.html" import render_field %}
 					<form class="uk-grid-small" action="/techaccount/" method="post" uk-grid>
-						<div class="uk-width-1-1">
-							<img class="uk-border-rounded uk-box-shadow-small" src="{{ session.techprof_pic }}" width="200" height="200" alt="">
-						</div>
-						<div class="uk-width-1-1">
-							<a href="{{ url_for('tech_profile_picture_upload') }}">
-								<button class="uk-button-small uk-button-default" type="button">Change picture</button>
-							</a>
-						</div>
+						<div class="uk-width-1">
+					    	<a href="/tech_duties/"><button class="uk-button-large uk-button-secondary" type="button">Become a Certified Minute.technician</button></a>
+					    </div>
 						<div class="uk-width-1-2@s">
 							{{ form.techfirst_name.label }}
 							{{ form.techfirst_name(value=session.techfirst_name, class_="uk-input") }}

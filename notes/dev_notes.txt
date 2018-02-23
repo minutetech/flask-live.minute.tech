@@ -30,7 +30,8 @@ To Do List
 -Need to figure out how to set default photo save location with 
 	--app.config['UPLOADED_PHOTOS_DEST'] = os.getcwd()
 	- getcwd() might be wrong
-
+-example of a text based response to a customer solution
+-give technicians money\incentives for thier views on their public solution (client can be anon)
 profiles:
 ---------
 -need to confirm someone is human

@@ -3,28 +3,21 @@
 {% block body %}
  
 	{% if session.logged_in == 'tech' %}
-				
-		<h2><span uk-icon="icon: unlock; ratio: 2.5"></span> Password Reset</h2>
+
+
+		<h2><img style="height: 2.5em;" src="{{ url_for('static', filename='flat-icons/007-wrench.png')}}" alt="alert"> Section Under Construction</h2>
 		<hr>
-		{% from "_formhelpers.html" import render_field %}
-			<form class="uk-grid-small uk-background-muted uk-padding" method=post action="/tech_password_reset/" uk-grid>
-				<h4>Please enter a new secure, but memorizable password below.</h4>
-				<div class="uk-width-1-2@s">{{ render_field(form.techpassword,placeholder="Password", class_="uk-input") }}</div>
-				<div class="uk-width-1-2@s">{{ render_field(form.techconfirm,placeholder="Repeat Password", class_="uk-input") }}</div><br>
-			<input class="uk-button uk-button-primary uk-width-1-4@s" type=submit value=Reset>
-			</form>
-		{% if error %}
-			<p><span class="uk-label uk-label-danger">{{ error }}</span></p>
-		{% endif %}
-		<hr>
-		<p><a href="/techregister/" uk-icon="icon: user"></a> Don't want to change your password? <a href="/techaccount/">Go to account.</a></p>
-	
-	 
+		<div class="uk-article uk-padding uk-background-muted">
+			<p class="uk-text-lead">Becoming a Minute.technician</p>
+			<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
+			 <a href="/tech_signature/"> <button class="uk-button-primary uk-button">Next <span uk-icon="icon: arrow-right; ratio: 1.25"></span></button></a>
+		</div>
+
 	{% elif session.logged_in == 'client' %}	
 
 		<!-- Display only if technician reaches this page -->
 		<div class="uk-article uk-padding uk-align-center">
-		 	<h2><img style="height: 1em;" src="{{ url_for('static', filename='flat-icons/alert.png')}}" alt="alert"> Logged in as technician </h2>
+		 	<h2><img style="height: 1em;" src="{{ url_for('static', filename='flat-icons/alert.png')}}" alt="alert"> Logged in as client </h2>
 		 	<hr>
 		 	<p>
 		 		This page is for technician accounts only, try logging out of your client account and logging into a Minute.technician account.
@@ -36,7 +29,7 @@
 		 		<a href="/" uk-icon="icon: home"></a> <a href="/"> Homepage</a>
 		 		<br>
 		 		<br>
-		 		<a href="/account/" uk-icon="icon: user"></a> <a href="/account/"> Account</a>
+		 		<a href="/techaccount/" uk-icon="icon: user"></a> <a href="/techaccount/"> Technician Account</a>
 		 		<img class="uk-responsive-height uk-responsive-width uk-padding uk-align-center" style="height:275px" src="{{ url_for('static', filename='flat-icons/alert.png')}}" alt="alert">
 		 	</p> 
 		 </div>	
@@ -45,7 +38,7 @@
 	
 		<!-- Display only if user reaches this page w/o logging in -->
 		<div class="uk-article uk-padding uk-align-center">
-		 	<h2><img style="height: 1em;" src="{{ url_for('static', filename='flat-icons/alert.png')}}" alt="alert"> Not Authenticated  </h2>
+		 	<h2><img style="height: 1em;" src="{{ url_for('static', filename='flat-icons/alert.png')}}" alt="alert"> Not logged in  </h2>
 		 	<hr>
 		 	<p>
 		 		<a href="/login/" uk-icon="icon: sign-in"></a> <a href="/login/"> Login </a> 
@@ -63,7 +56,3 @@
  
 {% endblock %}
 	  
-	  
-	  
-	  
-			
