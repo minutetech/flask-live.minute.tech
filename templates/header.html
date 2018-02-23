@@ -138,14 +138,16 @@
 <body>
 	<!-- Flashed messages section -->
 	<div class="uk-container-small uk-width-1-4@s uk-position-top-center uk-position-medium uk-position-z-index">
-		{% with messages = get_flashed_messages() %}
+		{% with messages = get_flashed_messages(with_categories=true) %}
 			{% if messages %}
-				{% for message in messages %}
-					<div class="uk-alert-success" role="alert" uk-alert>
-					    <a class="uk-alert-close" uk-close></a>
-					    <p>{{ message }}</p>
-					</div>
-				{% endfor %}
+				<ul class=flashes>
+					{% for category, message in messages %}
+							<div class="uk-alert-{{category}}" role="alert" uk-alert>
+							    <a class="uk-alert-close" uk-close></a>
+							    <p>{{ message }}</p>
+							</div>
+					{% endfor %}
+				</ul>
 			{% endif %}
 		{% endwith %}
 	</div>

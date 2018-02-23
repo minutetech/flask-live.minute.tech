@@ -46,10 +46,10 @@ tech_password_confirm = 0
 #temporary to ask questions on homepage
 #will eventually want a new user to be able to type a question out, but directed to sign up page immediatly, but their question is still saved and placed in database
 class AskForm(Form):
-    # difficulty = RadioField('Difficulty Rating', choices = [('1','1'), ('2','2'),('3','3'),('4','4'),('5','5')])
-    # title = TextField('Title:', [validators.Length(min=5, max=100)])
-    body = TextAreaField('Desciption', [validators.Length(min=10, max=2000)])
-    # tags = TextField('Tags:', [validators.Optional()])
+	# difficulty = RadioField('Difficulty Rating', choices = [('1','1'), ('2','2'),('3','3'),('4','4'),('5','5')])
+	# title = TextField('Title:', [validators.Length(min=5, max=100)])
+	body = TextAreaField('Desciption', [validators.Length(min=10, max=2000)])
+	# tags = TextField('Tags:', [validators.Optional()])
 
 ############################ PAGES #################################
 # #/var/www/FlaskApp/FlaskApp/static/user_info/prof_pic
@@ -98,7 +98,7 @@ def homepage():
 		conn.commit()
 		c.close()
 		conn.close()
-		flash("Submission successful. We have added your question to the pool!")
+		flash(u'Submission successful. We have added your question to the pool!', 'success')
 		return redirect(url_for('homepage'))
 
 	else:
@@ -108,8 +108,8 @@ def homepage():
 #NEED DATABASE FOR THIS
 
 class ContactForm(Form):
-    message = TextAreaField('Message', [validators.Length(min=10, max=2000)])
-    email = TextField('Email', [validators.Optional()])
+	message = TextAreaField('Message', [validators.Length(min=10, max=2000)])
+	email = TextField('Email', [validators.Optional()])
 
 @app.route('/about/', methods=['GET','POST'])
 def about():
@@ -134,7 +134,7 @@ def about():
 			conn.commit()
 			c.close()
 			conn.close()
-			flash("Submission successful. We will get back to you as soon as possible!")
+			flash(u'Submission successful. We will get back to you as soon as possible!', 'success')
 			return redirect(url_for('about'))
 
 		else:
@@ -146,15 +146,15 @@ def about():
 
 @app.errorhandler(404)
 def page_not_found(e):
-    return render_template("404.html")
+	return render_template("404.html")
 
 @app.errorhandler(405)
 def method_not_found(e):
-    return render_template("405.html")
+	return render_template("405.html")
 
 @app.errorhandler(500)
 def internal_server_error(e):
-    return render_template("500.html")
+	return render_template("500.html")
 
 
 ############################################ TICKET SYSTEM #########################################################
@@ -172,7 +172,7 @@ def ask():
 			conn.commit()
 			c.close()
 			conn.close()
-			flash("Thanks, we got you down!")
+			flash(u'Thanks, we got you down!', 'success')
 			return redirect(url_for('ask'))
 
 		return render_template("ask.html", error = error)
@@ -191,7 +191,7 @@ def resolved():
 			conn.commit()
 			c.close()
 			conn.close()
-			flash("Thanks, we got you down!")
+			flash(u'Thanks, we got you down!', 'success')
 			return redirect(url_for('resolved'))
 
 		return render_template("resolved.html", error = error)
@@ -204,14 +204,13 @@ def pending():
 	error = ''
 	try:
 		c, conn = connection()
-		flash(session['prof_pic'])
 		if request.method == "POST":
 			cid = session['clientcid']
 			c.execute("UPDATE cpersonals SET launch_email = 1 WHERE cid = (%s)", (cid,))
 			conn.commit()
 			c.close()
 			conn.close()
-			flash("Thanks, we got you down!")
+			flash(u'Thanks, we got you down!', 'success')
 			return redirect(url_for('pending'))
 
 		return render_template("pending.html", error = error)
@@ -233,7 +232,7 @@ def answer():
 			conn.commit()
 			c.close()
 			conn.close()
-			flash("Thanks, we got you down!")
+			flash(u'Thanks, we got you down!', 'success')
 			return redirect(url_for('answer'))
 
 		return render_template("answer.html", error = error)
@@ -252,7 +251,7 @@ def techresolved():
 			conn.commit()
 			c.close()
 			conn.close()
-			flash("Thanks, we got you down!")
+			flash(u'Thanks, we got you down!', 'success')
 			return redirect(url_for('techresolved'))
 
 		return render_template("techresolved.html", error = error)
@@ -272,7 +271,7 @@ def techroom(select_q):
 			conn.commit()
 			c.close()
 			conn.close()
-			flash("Thanks, we got you down!")
+			flash(u'Thanks, we got you down!', 'success')
 			return redirect(url_for('techroom'))
 
 		return render_template("techroom.html", error = error)
@@ -292,7 +291,7 @@ def techpending():
 			conn.commit()
 			c.close()
 			conn.close()
-			flash("Thanks, we got you down!")
+			flash(u'Thanks, we got you down!', 'success')
 			return redirect(url_for('techpending'))
 
 		return render_template("techpending.html", error = error)
@@ -381,6 +380,7 @@ def account():
 			session['bio'] = bio
 			session['reg_date'] = reg_date
 			session['prof_pic'] = prof_pic
+			session['pconfirm'] = 0
 			#//END grab all the clients info
 			c, conn = connection()
 			
@@ -411,12 +411,12 @@ def account():
 				# Could show and hide it with uk-disabled
 				# 
 
-				#check if email already exists
-				x = c.execute("SELECT * FROM clients WHERE email = (%s)", (thwart(email),))
-				if int(x) > 0 and form.email.data:
-					#redirect them if they need to recover an old email from and old account
-					flash("That email already has an account, please try a a different email.")
-					return render_template('account.html', form=form)
+				# #check if email already exists
+				# x = c.execute("SELECT * FROM clients WHERE email = (%s)", (thwart(email),))
+				# if int(x) > 0 and form.email.data:
+				# 	#redirect them if they need to recover an old email from and old account
+				# 	flash(u'That email already has an account, please try a a different email.', 'danger')
+				# 	return render_template('account.html', form=form)
 
 				c.execute("UPDATE clients SET email = %s, phone = %s WHERE cid = (%s)", (email, phone, clientcid))
 				c.execute("UPDATE cpersonals SET first_name = %s, last_name = %s, address = %s, city = %s, state = %s, zip = %s, birth_month = %s, birth_day = %s, birth_year = %s, bio = %s WHERE cid = (%s)", (thwart(first_name), thwart(last_name), thwart(address), thwart(city), thwart(state), thwart(czip), birth_month, birth_day, birth_year, bio, clientcid))
@@ -435,10 +435,11 @@ def account():
 				session['birth_day'] = birth_day
 				session['birth_year'] = birth_year
 				session['bio'] = bio
-				flash("Your account is successfully updated.")
+				flash(u'Your account is successfully updated.', 'success')
 				return redirect(url_for('account'))
 		else:
-			flash("Try logging out and back in again!")
+			#this probably isnt necessary since 500 error catches it as no seesion variable called 'logged_in'
+			flash(u'Try logging in as a client', 'secondary')
 
 		return render_template("account.html", form=form, error = error)
 
@@ -471,6 +472,7 @@ def account():
 # 		if session['prof_pic'] != url_for('static', filename='user_info/prof_pic/default.jpg'):
 # 			#need to delete or move the old prof_pic if it was set! Prevents users from adding too many pictures
 # 			os.remove('static/user_info/prof_pic/'+cid+'_'+first_name+'.png')
+			#flash(u'Your account is successfully updated.', 'success')
 # 			flash("You already have a file on the server!")
 # 		filename = photos.save(form.prof_pic.data, name=cid+'_'+first_name+'.png')
 # 		file_url = photos.url(filename) 
@@ -564,6 +566,7 @@ def techaccount():
 			session['techbio'] = techbio
 			session['techreg_date'] = techreg_date
 			session['techprof_pic'] = techprof_pic
+			session['tpconfirm'] = 0
 			#//END grab all the clients info
 			c, conn = connection()
 			
@@ -591,6 +594,7 @@ def techaccount():
 				# if int(x) > 0:
 				# 	#redirect them if they need to recover an old email from and old account
 				# 	flash("That email already has an account, please try a a different email.")
+				#flash(u'Your account is successfully updated.', 'success')
 				# 	return render_template('techaccount.html', form=form)
 
 				c.execute("UPDATE technicians SET email = %s, phone = %s WHERE tid = (%s)", (techemail, techphone, techtid))
@@ -610,11 +614,11 @@ def techaccount():
 				session['techbirth_day'] = techbirth_day
 				session['techbirth_year'] = techbirth_year
 				session['techbio'] = techbio
-				flash("Your account is successfully updated.")
+				flash(u'Your account is successfully updated.', 'success')
 				return redirect(url_for('techaccount'))
 
 		else:
-			flash("Try logging out and back in again!")
+			flash(u'Try logging out and back in again!', 'secondary')
 			return redirect(url_for('homepage'))
 
 		return render_template("techaccount.html", form=form, error = error)
@@ -628,7 +632,7 @@ def tech_duties():
 	
 #CLIENT REGISTER
 class TechSignatureForm(Form):
-    signature = TextField('Signature (Please enter your full name)', [validators.Length(min=2, max=100)])
+	signature = TextField('Signature (Please enter your full name)', [validators.Length(min=2, max=100)])
 
 @app.route('/tech_signature/', methods=['GET','POST'])
 def tech_signature():
@@ -641,7 +645,7 @@ def tech_signature():
 		conn.commit()
 		c.close()
 		conn.close()
-		flash("Submission successful. We will contact you soon.")
+		flash(u'Submission successful. We will contact you soon.', 'success')
 		return redirect(url_for('techaccount'))
 
 	else:
@@ -674,6 +678,7 @@ def tech_signature():
 # 		# Checks if the prof_pic is set yet. if set, then dont need to delete the old picture on the server
 # 		# if session['techprof_pic'] != 'http://138.68.238.112/var/www/FlaskApp/FlaskApp/_uploads/photos/static/tech_user_info/prof_pic/default.jpg':
 # 		# 	#need to delete or move the old prof_pic if it was set! Prevents users from adding too many pictures
+#flash(u'Submission successful. We will contact you soon.', 'success')
 # 		# 	flash("You already have a file on the server!")
 # 		#If the user_prof_pic is there, then  
 # 		session['techprof_pic'] = file_url
@@ -688,101 +693,97 @@ def tech_signature():
 # 	return render_template('tech_profile_picture_upload.html', form=form, file_url=file_url)
 
 def login_required(f):
-    #not 100% how this works
-    # techlogged_in doesnt look like its user anywhere, be sure of these and delete if not anywhere else
-    @wraps(f)
-    def wrap(*args, **kwargs):
-        if ('logged_in' or 'techlogged_in') in session:
-            #arguments and key word arguments
-            return f(*args, **kwargs)
-        else:
-            flash("You need to login first.")
-            return redirect(url_for('login_page'))
-    return wrap
+	#not 100% how this works
+	# techlogged_in doesnt look like its user anywhere, be sure of these and delete if not anywhere else
+	@wraps(f)
+	def wrap(*args, **kwargs):
+		if ('logged_in' or 'techlogged_in') in session:
+			#arguments and key word arguments
+			return f(*args, **kwargs)
+		else:
+			flash(u'You need to login first.', 'danger')
+			return redirect(url_for('login_page'))
+	return wrap
 
 @app.route('/logout/', methods=['GET','POST'])
 @login_required
 def logout():
 	session.clear()
-	flash("You have been logged out!")
+	flash(u'You have been logged out!', 'danger')
 	return redirect(url_for('homepage'))
 
-    
+	
 #CLIENT LOGIN
 @app.route('/login/', methods=['GET','POST'])
 def login_page():
-    error = ''
-    try:
-        c, conn = connection()
-        if request.method == "POST":
-            c.execute("SELECT * FROM clients WHERE email = (%s)", (thwart(request.form['email']),))
-            pdata = c.fetchone()[3]
-                
-            if sha256_crypt.verify(request.form['password'], pdata):
-                email = request.form['email']
-                #putting these close and commit 
-                #functions outside the 'if' will break code
-                conn.commit()
-                c.close()
-                conn.close()
-                session['logged_in'] = 'client'
-                session['email'] = thwart(email)
-                flash("You are now logged in.")
-                return redirect(url_for("account"))
-            
-            else:
-                error = "Invalid credentials, try again."
+	error = ''
+	try:
+		c, conn = connection()
+		if request.method == "POST":
+			c.execute("SELECT * FROM clients WHERE email = (%s)", (thwart(request.form['email']),))
+			pdata = c.fetchone()[3]
+				
+			if sha256_crypt.verify(request.form['password'], pdata):
+				email = request.form['email']
+				#putting these close and commit 
+				#functions outside the 'if' will break code
+				conn.commit()
+				c.close()
+				conn.close()
+				session['logged_in'] = 'client'
+				session['email'] = thwart(email)
+				flash(u'You are now logged in.', 'success')
+				return redirect(url_for("account"))
+			
+			else:
+				error = "Invalid credentials, try again."
 
-        return render_template("login.html", error = error)
-        
-    except Exception as e:
-        #flash(e)
-        error = "Invalid credentials, try again."
-        return render_template("login.html", error = error)
+		return render_template("login.html", error = error)
+		
+	except Exception as e:
+		error = "Invalid credentials, try again."
+		return render_template("login.html", error = error)
 
 #PASSWORD CONFIRM
 @app.route('/password_confirm/', methods=['GET','POST'])
 def password_confirm():
-    error = ''
-    global password_confirm
-    try:
-        c, conn = connection()
-        if request.method == "POST":
-            c.execute("SELECT * FROM clients WHERE email = (%s)", (thwart(request.form['email']),))
-            pdata = c.fetchone()[3]
-                
-            if sha256_crypt.verify(request.form['password'], pdata):
-                #putting these close and commit 
-                #functions outside the 'if' will break code
-                conn.commit()
-                c.close()
-                conn.close()
-                password_confirm = 1
-                flash("Successfully authorized.")
-                return redirect(url_for("password_reset"))
-            
-            else:
-                error = "Invalid credentials, try again."
+	error = ''
+	try:
+		c, conn = connection()
+		if request.method == "POST":
+			c.execute("SELECT * FROM clients WHERE email = (%s)", (thwart(request.form['email']),))
+			pdata = c.fetchone()[3]
+				
+			if sha256_crypt.verify(request.form['password'], pdata):
+				#putting these close and commit 
+				#functions outside the 'if' will break code
+				conn.commit()
+				c.close()
+				conn.close()
+				session['pconfirm'] = 1
+				flash(u'Successfully authorized.', 'success')
+				return redirect(url_for("password_reset"))
+			
+			else:
+				error = "Invalid credentials, try again."
 
-        return render_template("password_confirm.html", error = error)
-        
-    except Exception as e:
-        #flash(e)
-        error = "Invalid credentials, try again."
-        return render_template("password_confirm.html", error = error)
+		return render_template("password_confirm.html", error = error)
+		
+	except Exception as e:
+		error = "Invalid credentials, try again."
+		return render_template("password_confirm.html", error = error)
 
 #CLIENT REGISTER
 class PasswordResetForm(Form):
-    password = PasswordField('Password', [validators.Required(), validators.EqualTo('confirm', message ="Passwords must match.")])
-    confirm = PasswordField('Repeat Password')
+	password = PasswordField('Password', [validators.Required(), validators.EqualTo('confirm', message ="Passwords must match.")])
+	confirm = PasswordField('Repeat Password')
 
 # PASSWORD RESET
 @app.route('/password_reset/', methods=['GET','POST'])
 def password_reset():
 	error = ''
-	global password_confirm
 	try:
-		if password_confirm == 1:
+		if session['pconfirm'] == 1:
 			form = PasswordResetForm(request.form)
 			if request.method == "POST" and form.validate():
 				cid = session['clientcid']
@@ -790,16 +791,16 @@ def password_reset():
 				c, conn = connection()
 				c.execute("UPDATE clients SET password = %s WHERE cid = (%s)", (thwart(password), cid))
 				conn.commit()
-				flash("Password successfully changed!")
+				flash(u'Password successfully changed!', 'success')
 				c.close()
 				conn.close()
 				#so they cant get back in!
-				password_confirm = 0
+				session['pconfirm'] = 0
 				return redirect(url_for('account'))
 
 			return render_template("password_reset.html", form=form)
 		else:
-			flash("Not permitted.")
+			flash(u'Not allowed there!', 'danger')
 			return redirect(url_for('homepage'))
 
 	except Exception as e:
@@ -809,78 +810,74 @@ def password_reset():
 #TECH LOGIN
 @app.route('/techlogin/', methods=['GET','POST'])
 def tech_login_page():
-    error = ''
-    try:
-        c, conn = connection()
-        if request.method == "POST":
-            c.execute("SELECT * FROM technicians WHERE email = (%s)", (thwart(request.form['techemail']),))
-            tpdata = c.fetchone()[3]
-                
-            if sha256_crypt.verify(request.form['techpassword'], tpdata):
-                techemail = request.form['techemail']
-                #putting these close and commit 
-                #functions outside the 'if' will break code
-                conn.commit()
-                c.close()
-                conn.close()
-                session['logged_in'] = 'tech'
-                session['techemail'] = thwart(techemail)
-                flash("You are now logged in.")
-                return redirect(url_for("techaccount"))
-            
-            else:
-                error = "Invalid credentials, try again."
+	error = ''
+	try:
+		c, conn = connection()
+		if request.method == "POST":
+			c.execute("SELECT * FROM technicians WHERE email = (%s)", (thwart(request.form['techemail']),))
+			tpdata = c.fetchone()[3]
+				
+			if sha256_crypt.verify(request.form['techpassword'], tpdata):
+				techemail = request.form['techemail']
+				#putting these close and commit 
+				#functions outside the 'if' will break code
+				conn.commit()
+				c.close()
+				conn.close()
+				session['logged_in'] = 'tech'
+				session['techemail'] = thwart(techemail)
+				flash(u'You are now logged in.', 'success')
+				return redirect(url_for("techaccount"))
+			
+			else:
+				error = "Invalid credentials, try again."
 
-        return render_template("techlogin.html", error = error)
-        
-    except Exception as e:
-        #flash(e)
-        error = e
-        return render_template("techlogin.html", error = error)
+		return render_template("techlogin.html", error = error)
+		
+	except Exception as e:
+		error = e
+		return render_template("techlogin.html", error = error)
 
 #PASSWORD CONFIRM
 @app.route('/tech_password_confirm/', methods=['GET','POST'])
 def tech_password_confirm():
-    error = ''
-    global tech_password_confirm
-    try:
-        c, conn = connection()
-        if request.method == "POST":
-            c.execute("SELECT * FROM technicians WHERE email = (%s)", (thwart(request.form['techemail']),))
-            tpdata = c.fetchone()[3]
-                
-            if sha256_crypt.verify(request.form['techpassword'], tpdata):
-                #putting these close and commit 
-                #functions outside the 'if' will break code
-                conn.commit()
-                c.close()
-                conn.close()
-                tech_password_confirm = 1
-                flash("Successfully authorized.")
-                return redirect(url_for("tech_password_reset"))
-            
-            else:
-                error = "Invalid credentials, try again."
+	error = ''
+	try:
+		c, conn = connection()
+		if request.method == "POST":
+			c.execute("SELECT * FROM technicians WHERE email = (%s)", (thwart(request.form['techemail']),))
+			tpdata = c.fetchone()[3]
+				
+			if sha256_crypt.verify(request.form['techpassword'], tpdata):
+				#putting these close and commit 
+				#functions outside the 'if' will break code
+				conn.commit()
+				c.close()
+				conn.close()
+				session['tpconfirm'] = 1 
+				flash(u'Successfully authorized.', 'success')
+				return redirect(url_for("tech_password_reset"))
+			
+			else:
+				error = "Invalid credentials, try again."
 
-        return render_template("tech_password_confirm.html", error = error)
-        
-    except Exception as e:
-        #flash(e)
-        error = e
-        return render_template("tech_password_confirm.html", error = error)
+		return render_template("tech_password_confirm.html", error = error)
+		
+	except Exception as e:
+		error = e
+		return render_template("tech_password_confirm.html", error = error)
 
 #CLIENT REGISTER
 class TechPasswordResetForm(Form):
-    techpassword = PasswordField('Password', [validators.Required(), validators.EqualTo('techconfirm', message ="Passwords must match.")])
-    techconfirm = PasswordField('Repeat Password')
+	techpassword = PasswordField('Password', [validators.Required(), validators.EqualTo('techconfirm', message ="Passwords must match.")])
+	techconfirm = PasswordField('Repeat Password')
 
 # PASSWORD RESET
 @app.route('/tech_password_reset/', methods=['GET','POST'])
 def tech_password_reset():
 	error = ''
-	global tech_password_confirm
 	try:
-		if tech_password_confirm == 1:
+		if session['tpconfirm'] == 1:
 			form = TechPasswordResetForm(request.form)
 			if request.method == "POST" and form.validate():
 				tid = session['techtid']
@@ -888,30 +885,30 @@ def tech_password_reset():
 				c, conn = connection()
 				c.execute("UPDATE technicians SET password = %s WHERE tid = (%s)", (thwart(techpassword), tid))
 				conn.commit()
-				flash("Password successfully changed!")
+				flash(u'Password successfully changed!', 'success')
 				c.close()
 				conn.close()
 				#so they cant get back in!
-				tech_password_confirm = 0
+				session['tpconfirm'] == 0
 				return redirect(url_for('techaccount'))
 
 			return render_template("tech_password_reset.html", form=form)
 		else:
-			flash(tech_password_confirm)
+			flash(u'Not permitted.', 'danger')
 			return redirect(url_for('homepage'))
 
 	except Exception as e:
 		return(str(e))
-    
+	
 #CLIENT REGISTER
 class RegistrationForm(Form):
-    first_name = TextField('First Name', [validators.Length(min=1, max=50)])
-    last_name = TextField('Last Name', [validators.Length(min=1, max=50)])
-    email = TextField('Email Address', [validators.Length(min=6, max=50)])
-    phone = TextField('Phone Number', [validators.Length(min=10, max=20)])
-    czip = TextField('ZIP', [validators.Length(min=2, max=16)])
-    password = PasswordField('Password', [validators.Required(), validators.EqualTo('confirm', message ="Passwords must match.")])
-    confirm = PasswordField('Repeat Password')
+	first_name = TextField('First Name', [validators.Length(min=1, max=50)])
+	last_name = TextField('Last Name', [validators.Length(min=1, max=50)])
+	email = TextField('Email Address', [validators.Length(min=6, max=50)])
+	phone = TextField('Phone Number', [validators.Length(min=10, max=20)])
+	czip = TextField('ZIP', [validators.Length(min=2, max=16)])
+	password = PasswordField('Password', [validators.Required(), validators.EqualTo('confirm', message ="Passwords must match.")])
+	confirm = PasswordField('Repeat Password')
 
 @app.route('/register/', methods=['GET','POST'])
 def register_page():
@@ -935,7 +932,7 @@ def register_page():
 			x = c.execute("SELECT * FROM clients WHERE email = (%s)", (thwart(email),))
 
 			if int(x) > 0:
-				flash("That email already has an account, please try a new email or sign in.")
+				flash(u'That email already has an account, please try a new email or sign in.', 'danger')
 				return render_template('register.html', form=form)
 			else:
 				#make sure this default pic is in the correct folder!!
@@ -943,7 +940,7 @@ def register_page():
 				c.execute("INSERT INTO clients (email, phone, password) VALUES (%s, %s, %s)", (thwart(email), thwart(phone), thwart(password)))
 				c.execute("INSERT INTO cpersonals (first_name, last_name, address, city, state, zip, bio, prof_pic) VALUES (%s, %s, %s, %s, %s, %s, %s, %s)", (thwart(first_name), thwart(last_name), address, city, state, thwart(czip), bio, default_prof_pic))
 				conn.commit()
-				flash("Thanks for registering!")
+				flash(u'Thanks for registering!', 'success')
 				c.close()
 				conn.close()
 
@@ -973,18 +970,18 @@ def register_page():
 
 #TECH REGISTER
 class TechRegistrationForm(Form):
-    techfirst_name = TextField('First Name', [validators.Length(min=1, max=50)])
-    techlast_name = TextField('Last Name', [validators.Length(min=1, max=50)])
-    techemail = TextField('Email Address', [validators.Length(min=6, max=50)])
-    techphone = TextField('Phone Number', [validators.Length(min=10, max=20)])
-    techaddress = TextField('Street Address', [validators.Length(min=6, max=100)])
-    techcity = TextField('City', [validators.Length(min=2, max=50)])
-    #('what we see','what they see')
-    techstate = TextField('State', [validators.Length(min=2, max=2)])
-    techzip = TextField('ZIP', [validators.Length(min=2, max=16)])
-    techpassword = PasswordField('Password', [validators.Required(), validators.EqualTo('techconfirm', message ="Passwords must match.")])
-    techconfirm = PasswordField('Repeat Password')
-    
+	techfirst_name = TextField('First Name', [validators.Length(min=1, max=50)])
+	techlast_name = TextField('Last Name', [validators.Length(min=1, max=50)])
+	techemail = TextField('Email Address', [validators.Length(min=6, max=50)])
+	techphone = TextField('Phone Number', [validators.Length(min=10, max=20)])
+	techaddress = TextField('Street Address', [validators.Length(min=6, max=100)])
+	techcity = TextField('City', [validators.Length(min=2, max=50)])
+	#('what we see','what they see')
+	techstate = TextField('State', [validators.Length(min=2, max=2)])
+	techzip = TextField('ZIP', [validators.Length(min=2, max=16)])
+	techpassword = PasswordField('Password', [validators.Required(), validators.EqualTo('techconfirm', message ="Passwords must match.")])
+	techconfirm = PasswordField('Repeat Password')
+	
 @app.route('/techregister/', methods=['GET','POST'])
 def tech_register_page():
 	error = ''
@@ -1007,14 +1004,14 @@ def tech_register_page():
 			x = c.execute("SELECT * FROM technicians WHERE email = (%s)", (thwart(techemail),))
 
 			if int(x) > 0:
-				flash("That email already has an account, please try a new email or sign in.")
+				flash(u'That email already has an account, please try a new email or sign in.', 'danger')
 				return render_template('techregister.html', form=form)
 			else:
 				default_prof_pic = url_for('static', filename='tech_user_info/prof_pic/default.jpg')
 				c.execute("INSERT INTO technicians (email, phone, password) VALUES (%s, %s, %s)", (thwart(techemail), thwart(techphone), thwart(techpassword)))
 				c.execute("INSERT INTO tpersonals (first_name, last_name, address, city, state, zip, bio, prof_pic) VALUES (%s, %s, %s, %s, %s, %s, %s, %s)", (thwart(techfirst_name), thwart(techlast_name), thwart(techaddress), thwart(techcity), techstate, thwart(techzip), techbio, default_prof_pic))
 				conn.commit()
-				flash("Thanks for registering!")
+				flash(u'Thanks for registering!', 'success')
 				c.close()
 				conn.close()
 
@@ -1054,8 +1051,8 @@ def return_file():
 	#return send_file('static\legal\MinutetechLLC_tos.pdf', attachment_filename='MinutetechLLC_tos.pdf')
 	return send_file('MinutetechLLC_tos.pdf', attachment_filename='MinutetechLLC_tos.pdf')
 
-    
+	
 ############################################ END ACCOUNT SYSTEM #########################################################
 
 if __name__ == "__main__":
-    app.run(debug=True)
+	app.run(debug=True)

@@ -174,13 +174,14 @@ $ getent passwd | cut -d':' -f1
 *Importing files from different folder: https://stackoverflow.com/questions/4383571/importing-files-from-different-folder
 
 
-
+*If you get the error: " IndentationError: unindent does not match any outer indentation level "
+Set Sublime Text to use tabs for indentation: View --> Indentation --> Convert Indentation to Tabs
 
 
 
 
 ============================================
-Once working...
+Once working locally...
 
 $ C:\Users\Dougroot>cd Python27\Projects\minutetech-flask\venv\Scripts
 
@@ -194,3 +195,13 @@ $ (minutetech) C:\Users\Dougroot\Python27\Projects\minutetech-flask\> python __i
 * Debugger is active!
 * Debugger PIN: 347-956-374
 * Running on http://127.0.0.1:5000/ (Press CTRL+C to quit)
+
+
+To pull change to Live Server...
+
+> Login to PuTTy for server
+$ cd ../-var/www/FlaskApp/FlaskApp/
+
+$ git pull origin master
+
+$ service apache2 restart

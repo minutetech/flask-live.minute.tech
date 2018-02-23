@@ -117,3 +117,7 @@ PRIMARY KEY (contact_id));
 -->The answer bit is set that specific thread statement as the answer
 
 -->Currently the prof_pic BLOB is just holding the URL
+
+
+-->change the default layout of the entries
+$ SELECT * FROM sometable\G
