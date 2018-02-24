@@ -146,7 +146,7 @@
 			{% if messages %}
 				<ul class=flashes>
 					{% for category, message in messages %}
-							<div class="uk-alert-{{category}}" role="alert" uk-alert>
+							<div uk-alert="animation: uk-animation-scale-up; duration:500" class="uk-alert-{{category}} uk-animation-scale-down" role="alert">
 							    <a class="uk-alert-close" uk-close></a>
 							    <p>{{ message }}</p>
 							</div>
