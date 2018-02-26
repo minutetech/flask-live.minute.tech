@@ -37,9 +37,7 @@ app.config['SECRET_KEY'] = 'quincyisthebestdog11'
 ## GLOBALS
 # For selecting question from list
 select_q = 0
-# Checking if session.logged_in is set after a successfully login
-password_confirm = 0
-tech_password_confirm = 0
+
 
 #############  FUNCTIONS  ##################
 
@@ -308,8 +306,8 @@ def techpending():
 class EditAccountForm(Form):
 	first_name = TextField('First Name', [validators.Length(min=1, max=50)])
 	last_name = TextField('Last Name', [validators.Length(min=1, max=50)])
-	email = TextField('Email Address', [validators.Length(min=6, max=50)])
-	phone = TextField('Phone Number', [validators.Length(min=10, max=20)])
+	#email = TextField('Email Address', [validators.Length(min=6, max=50)])
+	#phone = TextField('Phone Number', [validators.Length(min=10, max=20)])
 	address = TextField('Street Address', [validators.Length(min=6, max=100)])
 	city = TextField('City', [validators.Length(min=2, max=50)])
 	state = TextField('State', [validators.Length(min=2, max=2)])
@@ -381,6 +379,8 @@ def account():
 			session['reg_date'] = reg_date
 			session['prof_pic'] = prof_pic
 			session['pconfirm'] = 0
+			session['econfirm'] = 0
+			session['phconfirm'] = 0
 			#//END grab all the clients info
 			c, conn = connection()
 			
@@ -390,8 +390,8 @@ def account():
 			if request.method == 'POST' and form.validate():
 				first_name = form.first_name.data
 				last_name = form.last_name.data
-				email = form.email.data
-				phone = form.phone.data
+				#email = form.email.data
+				#phone = form.phone.data
 				address = form.address.data
 				city = form.city.data
 				state = form.state.data
@@ -402,31 +402,15 @@ def account():
 				bio = request.form['bio']
 				clientcid = session['clientcid']
 
-				# Currently, when you change to an email that already exists, 
-				# it will swap to that profile on page reload of the email you inserted, and will allow an illegal login!!
-				# Need to be able to have the email field autofill, but first check if that email is in the database
-				# Try using a SQL statement to get everything but the one in the session already
-				# and checking the database with the email in session EXCLUDED
-				# Could also swap to new page (lots of overhead)
-				# Could show and hide it with uk-disabled
-				# 
-
-				# #check if email already exists
-				# x = c.execute("SELECT * FROM clients WHERE email = (%s)", (thwart(email),))
-				# if int(x) > 0 and form.email.data:
-				# 	#redirect them if they need to recover an old email from and old account
-				# 	flash(u'That email already has an account, please try a a different email.', 'danger')
-				# 	return render_template('account.html', form=form)
-
-				c.execute("UPDATE clients SET email = %s, phone = %s WHERE cid = (%s)", (email, phone, clientcid))
+				# c.execute("UPDATE clients SET email = %s, phone = %s WHERE cid = (%s)", (email, phone, clientcid))
 				c.execute("UPDATE cpersonals SET first_name = %s, last_name = %s, address = %s, city = %s, state = %s, zip = %s, birth_month = %s, birth_day = %s, birth_year = %s, bio = %s WHERE cid = (%s)", (thwart(first_name), thwart(last_name), thwart(address), thwart(city), thwart(state), thwart(czip), birth_month, birth_day, birth_year, bio, clientcid))
 				conn.commit()
 				c.close()
 				conn.close()
 				session['first_name'] = first_name
 				session['last_name'] = last_name
-				session['email'] = email
-				session['phone'] = phone
+				# session['email'] = email
+				# session['phone'] = phone
 				session['address'] = address
 				session['city'] = city
 				session['state'] = state
@@ -445,6 +429,211 @@ def account():
 
 	except Exception as e:
 		return render_template("500.html", error = e)
+
+#PASSWORD CONFIRM
+@app.route('/password_confirm/', methods=['GET','POST'])
+def password_confirm():
+	error = ''
+	try:
+		c, conn = connection()
+		if request.method == "POST":
+			c.execute("SELECT * FROM clients WHERE email = (%s)", (thwart(request.form['email']),))
+			pdata = c.fetchone()[3]
+				
+			if sha256_crypt.verify(request.form['password'], pdata):
+				#putting these close and commit 
+				#functions outside the 'if' will break code
+				conn.commit()
+				c.close()
+				conn.close()
+				session['pconfirm'] = 1
+				flash(u'Successfully authorized.', 'success')
+				return redirect(url_for("password_reset"))
+			
+			else:
+				error = "Invalid credentials, try again."
+
+		return render_template("password_confirm.html", error = error)
+		
+	except Exception as e:
+		error = e
+		return render_template("password_confirm.html", error = error)
+
+class PasswordResetForm(Form):
+	password = PasswordField('Password', [validators.Required(), validators.EqualTo('confirm', message ="Passwords must match.")])
+	confirm = PasswordField('Repeat Password')
+
+# PASSWORD RESET
+@app.route('/password_reset/', methods=['GET','POST'])
+def password_reset():
+	error = ''
+	try:
+		if session['pconfirm'] == 1:
+			form = PasswordResetForm(request.form)
+			if request.method == "POST" and form.validate():
+				cid = session['clientcid']
+				password = sha256_crypt.encrypt((str(form.password.data)))
+				c, conn = connection()
+				c.execute("UPDATE clients SET password = %s WHERE cid = (%s)", (thwart(password), cid))
+				conn.commit()
+				flash(u'Password successfully changed!', 'success')
+				c.close()
+				conn.close()
+				#so they cant get back in!
+				session['pconfirm'] = 0
+				return redirect(url_for('account'))
+
+			return render_template("password_reset.html", form=form)
+		else:
+			flash(u'Not allowed there!', 'danger')
+			return redirect(url_for('homepage'))
+
+	except Exception as e:
+		return(str(e))
+
+# EMAIL CONFIRM
+@app.route('/email_confirm/', methods=['GET','POST'])
+def email_confirm():
+	error = ''
+	try:
+		c, conn = connection()
+		if request.method == "POST":
+			c.execute("SELECT * FROM clients WHERE email = (%s)", (thwart(request.form['email']),))
+			pdata = c.fetchone()[3]
+				
+			if sha256_crypt.verify(request.form['password'], pdata):
+				#putting these close and commit 
+				#functions outside the 'if' will break code
+				conn.commit()
+				c.close()
+				conn.close()
+				session['econfirm'] = 1
+				flash(u'Successfully authorized.', 'success')
+				return redirect(url_for("email_reset"))
+			
+			else:
+				error = "Invalid credentials, try again."
+
+		return render_template("email_confirm.html", error = error)
+		
+	except Exception as e:
+		error = e
+		return render_template("email_confirm.html", error = error)
+
+class EmailResetForm(Form):
+	email = TextField('Email', [validators.Required(), validators.EqualTo('confirm', message ="Emails must match.")])
+	confirm = TextField('Repeat Email')
+
+# EMAIL RESET
+@app.route('/email_reset/', methods=['GET','POST'])
+def email_reset():
+	error = ''
+	try:
+		if session['econfirm'] == 1:
+			form = EmailResetForm(request.form)
+			c, conn = connection()
+			if request.method == "POST" and form.validate():
+				cid = session['clientcid']
+				email = form.email.data
+				#check if form input is different than whats in session, if so, then we want to make sure the form input isnt in the DB
+				# if form input and the session are the same, we dont care, because nothing will change
+				if(email != session["email"]):
+					# too many perethesis, but something is wrong with the the syntax of the intx for statement
+					x = c.execute("SELECT * FROM clients WHERE email = (%s)", (thwart(email),))
+					conn.commit()
+					if int(x) > 0:
+						#redirect them if they need to recover an old email from and old account
+						flash(u'That email already has an account, please try a different email.', 'danger')
+						return render_template('email_reset.html', form=form)
+
+				c.execute("UPDATE clients SET email = %s WHERE cid = (%s)", (thwart(email), cid))
+				conn.commit()
+				flash(u'Email successfully changed!', 'success')
+				c.close()
+				conn.close()
+				session['email'] = email
+				#so they cant get back in!
+				session['econfirm'] = 0
+				return redirect(url_for('account'))
+
+			return render_template("email_reset.html", form=form)
+		else:
+			flash(u'Not allowed there!', 'danger')
+			return redirect(url_for('homepage'))
+
+	except Exception as e:
+		return(str(e))
+
+# PHONE CONFIRM
+@app.route('/phone_confirm/', methods=['GET','POST'])
+def phone_confirm():
+	error = ''
+	try:
+		c, conn = connection()
+		if request.method == "POST":
+			c.execute("SELECT * FROM clients WHERE email = (%s)", (thwart(request.form['email']),))
+			pdata = c.fetchone()[3]
+				
+			if sha256_crypt.verify(request.form['password'], pdata):
+				#putting these close and commit 
+				#functions outside the 'if' will break code
+				conn.commit()
+				c.close()
+				conn.close()
+				session['phconfirm'] = 1
+				flash(u'Successfully authorized.', 'success')
+				return redirect(url_for("phone_reset"))
+			
+			else:
+				error = "Invalid credentials, try again."
+
+		return render_template("phone_confirm.html", error = error)
+		
+	except Exception as e:
+		error = e
+		return render_template("phone_confirm.html", error = error)
+
+class PhoneResetForm(Form):
+	phone = TextField('Phone', [validators.Required(), validators.EqualTo('confirm', message ="Phone numbers must match.")])
+	confirm = TextField('Repeat Phone')
+
+# PHONE RESET
+@app.route('/phone_reset/', methods=['GET','POST'])
+def phone_reset():
+	error = ''
+	try:
+		if session['phconfirm'] == 1:
+			form = PhoneResetForm(request.form)
+			if request.method == "POST" and form.validate():
+				c, conn = connection()
+				cid = session['clientcid']
+				phone = form.phone.data
+				#check if phone number exists first
+				if(phone != session["phone"]):
+					# too many perethesis, but something is wrong with the the syntax of the intx for statement
+					x = c.execute("SELECT * FROM clients WHERE phone = (%s)", (thwart(phone),))
+					conn.commit()
+					if int(x) > 0:
+						#redirect them if they need to recover an old email from and old account
+						flash(u'That phone already has an account, please try a different phone.', 'danger')
+						return render_template('phone_reset.html', form=form)
+				
+				c.execute("UPDATE clients SET phone = %s WHERE cid = (%s)", (thwart(phone), cid))
+				conn.commit()
+				flash(u'Phone number successfully changed!', 'success')
+				c.close()
+				conn.close()
+				#so they cant get back in!
+				session['phconfirm'] = 0
+				return redirect(url_for('account'))
+
+			return render_template("phone_reset.html", form=form)
+		else:
+			flash(u'Not allowed there!', 'danger')
+			return redirect(url_for('homepage'))
+
+	except Exception as e:
+		return(str(e))
 
 # #### PROFILE PIC UPLOAD ####
 # # Based after https://gist.github.com/greyli/81d7e5ae6c9baf7f6cdfbf64e8a7c037
@@ -494,8 +683,8 @@ def account():
 class TechEditAccountForm(Form):
 	techfirst_name = TextField('First Name', [validators.Length(min=1, max=50)])
 	techlast_name = TextField('Last Name', [validators.Length(min=1, max=50)])
-	techemail = TextField('Email Address', [validators.Length(min=6, max=50)])
-	techphone = TextField('Phone Number', [validators.Length(min=10, max=20)])
+	# techemail = TextField('Email Address', [validators.Length(min=6, max=50)])
+	# techphone = TextField('Phone Number', [validators.Length(min=10, max=20)])
 	techaddress = TextField('Street Address', [validators.Length(min=6, max=100)])
 	techcity = TextField('City', [validators.Length(min=2, max=50)])
 	techstate = TextField('State', [validators.Length(min=2, max=2)])
@@ -567,6 +756,8 @@ def techaccount():
 			session['techreg_date'] = techreg_date
 			session['techprof_pic'] = techprof_pic
 			session['tpconfirm'] = 0
+			session['tphconfirm'] = 0
+			session['teconfirm'] = 0
 			#//END grab all the clients info
 			c, conn = connection()
 			
@@ -576,8 +767,8 @@ def techaccount():
 			if request.method == 'POST' and form.validate():
 				techfirst_name = form.techfirst_name.data
 				techlast_name = form.techlast_name.data
-				techemail = form.techemail.data
-				techphone = form.techphone.data
+				# techemail = form.techemail.data
+				# techphone = form.techphone.data
 				techaddress = form.techaddress.data
 				techcity = form.techcity.data
 				techstate = form.techstate.data
@@ -588,24 +779,15 @@ def techaccount():
 				techbio = request.form['techbio']
 				techtid = session['techtid']
 
-				# email_check = session['techemail']
-				# #check if email already exists
-				# x = c.execute("SELECT * FROM technicians WHERE email = (%s) EXCEPT (%s)", (thwart(techemail), email_check))
-				# if int(x) > 0:
-				# 	#redirect them if they need to recover an old email from and old account
-				# 	flash("That email already has an account, please try a a different email.")
-				#flash(u'Your account is successfully updated.', 'success')
-				# 	return render_template('techaccount.html', form=form)
-
-				c.execute("UPDATE technicians SET email = %s, phone = %s WHERE tid = (%s)", (techemail, techphone, techtid))
+				# c.execute("UPDATE technicians SET email = %s, phone = %s WHERE tid = (%s)", (techemail, techphone, techtid))
 				c.execute("UPDATE tpersonals SET first_name = %s, last_name = %s, address = %s, city = %s, state = %s, zip = %s, birth_month = %s, birth_day = %s, birth_year = %s, bio = %s WHERE tid = (%s)", (thwart(techfirst_name), thwart(techlast_name), thwart(techaddress), thwart(techcity), thwart(techstate), thwart(techzip), techbirth_month, techbirth_day, techbirth_year, techbio, techtid))
 				conn.commit()
 				c.close()
 				conn.close()
 				session['techfirst_name'] = techfirst_name
 				session['techlast_name'] = techlast_name
-				session['techemail'] = techemail
-				session['techphone'] = techphone
+				# session['techemail'] = techemail
+				# session['techphone'] = techphone
 				session['techaddress'] = techaddress
 				session['techcity'] = techcity
 				session['techstate'] = techstate
@@ -629,8 +811,7 @@ def techaccount():
 @app.route('/tech_duties/', methods=['GET','POST'])
 def tech_duties():
 	return render_template("tech_duties.html")
-	
-#CLIENT REGISTER
+
 class TechSignatureForm(Form):
 	signature = TextField('Signature (Please enter your full name)', [validators.Length(min=2, max=100)])
 
@@ -651,6 +832,213 @@ def tech_signature():
 	else:
 		error = "Please enter your name!"
 		return render_template("tech_signature.html", form=form)
+
+#PASSWORD CONFIRM
+@app.route('/techpassword_confirm/', methods=['GET','POST'])
+def techpassword_confirm():
+	error = ''
+	try:
+		c, conn = connection()
+		if request.method == "POST":
+			c.execute("SELECT * FROM technicians WHERE email = (%s)", (thwart(request.form['techemail']),))
+			tpdata = c.fetchone()[3]
+				
+			if sha256_crypt.verify(request.form['techpassword'], tpdata):
+				#putting these close and commit 
+				#functions outside the 'if' will break code
+				conn.commit()
+				c.close()
+				conn.close()
+				session['tpconfirm'] = 1
+				flash(u'Successfully authorized.', 'success')
+				return redirect(url_for("techpassword_reset"))
+			
+			else:
+				error = "Invalid credentials, try again."
+
+		return render_template("techpassword_confirm.html", error = error)
+		
+	except Exception as e:
+		error = e
+		return render_template("techpassword_confirm.html", error = error)
+
+class TechPasswordResetForm(Form):
+	techpassword = PasswordField('Password', [validators.Required(), validators.EqualTo('confirm', message ="Passwords must match.")])
+	confirm = PasswordField('Repeat Password')
+
+# PASSWORD RESET
+@app.route('/techpassword_reset/', methods=['GET','POST'])
+def techpassword_reset():
+	error = ''
+	try:
+		if session['tpconfirm'] == 1:
+			form = TechPasswordResetForm(request.form)
+			if request.method == "POST" and form.validate():
+				tid = session['techtid']
+				techpassword = sha256_crypt.encrypt((str(form.techpassword.data)))
+				c, conn = connection()
+				c.execute("UPDATE technicians SET password = %s WHERE tid = (%s)", (thwart(techpassword), tid))
+				conn.commit()
+				flash(u'Password successfully changed!', 'success')
+				c.close()
+				conn.close()
+				#so they cant get back in!
+				session['tpconfirm'] = 0
+				return redirect(url_for('techaccount'))
+
+			return render_template("techpassword_reset.html", form=form)
+		else:
+			flash(u'Not allowed there!', 'danger')
+			return redirect(url_for('homepage'))
+
+	except Exception as e:
+		return(str(e))
+
+# EMAIL CONFIRM
+@app.route('/techemail_confirm/', methods=['GET','POST'])
+def techemail_confirm():
+	error = ''
+	try:
+		c, conn = connection()
+		if request.method == "POST":
+			c.execute("SELECT * FROM technicians WHERE email = (%s)", (thwart(request.form['techemail']),))
+			tpdata = c.fetchone()[3]
+				
+			if sha256_crypt.verify(request.form['techpassword'], tpdata):
+				#putting these close and commit 
+				#functions outside the 'if' will break code
+				conn.commit()
+				c.close()
+				conn.close()
+				session['teconfirm'] = 1
+				flash(u'Successfully authorized.', 'success')
+				return redirect(url_for("techemail_reset"))
+			
+			else:
+				error = "Invalid credentials, try again."
+
+		return render_template("techemail_confirm.html", error = error)
+		
+	except Exception as e:
+		error = e
+		return render_template("techemail_confirm.html", error = error)
+
+class TechEmailResetForm(Form):
+	techemail = TextField('Email', [validators.Required(), validators.EqualTo('confirm', message ="Emails must match.")])
+	confirm = TextField('Repeat Email')
+
+# EMAIL RESET
+@app.route('/techemail_reset/', methods=['GET','POST'])
+def techemail_reset():
+	error = ''
+	try:
+		if session['teconfirm'] == 1:
+			form = TechEmailResetForm(request.form)
+			c, conn = connection()
+			if request.method == "POST" and form.validate():
+				tid = session['techtid']
+				techemail = form.techemail.data
+				#check if form input is different than whats in session, if so, then we want to make sure the form input isnt in the DB
+				# if form input and the session are the same, we dont care, because nothing will change
+				if(techemail != session["techemail"]):
+					# too many perethesis, but something is wrong with the the syntax of the intx for statement
+					x = c.execute("SELECT * FROM technicians WHERE email = (%s)", (thwart(techemail),))
+					conn.commit()
+					if int(x) > 0:
+						#redirect them if they need to recover an old email from and old account
+						flash(u'That email already has an account, please try a different email.', 'danger')
+						return render_template('techemail_reset.html', form=form)
+
+				c.execute("UPDATE technicians SET email = %s WHERE tid = (%s)", (thwart(techemail), tid))
+				conn.commit()
+				flash(u'Email successfully changed!', 'success')
+				c.close()
+				conn.close()
+				session['techemail'] = techemail
+				#so they cant get back in!
+				session['teconfirm'] = 0
+				return redirect(url_for('techaccount'))
+
+			return render_template("techemail_reset.html", form=form)
+		else:
+			flash(u'Not allowed there!', 'danger')
+			return redirect(url_for('homepage'))
+
+	except Exception as e:
+		return(str(e))
+
+# PHONE CONFIRM
+@app.route('/techphone_confirm/', methods=['GET','POST'])
+def techphone_confirm():
+	error = ''
+	try:
+		c, conn = connection()
+		if request.method == "POST":
+			c.execute("SELECT * FROM technicians WHERE email = (%s)", (thwart(request.form['techemail']),))
+			tpdata = c.fetchone()[3]
+				
+			if sha256_crypt.verify(request.form['techpassword'], tpdata):
+				#putting these close and commit 
+				#functions outside the 'if' will break code
+				conn.commit()
+				c.close()
+				conn.close()
+				session['tphconfirm'] = 1
+				flash(u'Successfully authorized.', 'success')
+				return redirect(url_for("techphone_reset"))
+			
+			else:
+				error = "Invalid credentials, try again."
+
+		return render_template("techphone_confirm.html", error = error)
+		
+	except Exception as e:
+		error = e
+		return render_template("techphone_confirm.html", error = error)
+
+class TechPhoneResetForm(Form):
+	techphone = TextField('Phone', [validators.Required(), validators.EqualTo('confirm', message ="Phone numbers must match.")])
+	confirm = TextField('Repeat Phone')
+
+# PHONE RESET
+@app.route('/techphone_reset/', methods=['GET','POST'])
+def techphone_reset():
+	error = ''
+	try:
+		if session['tphconfirm'] == 1:
+			form = TechPhoneResetForm(request.form)
+			if request.method == "POST" and form.validate():
+				#check if phone number exists first
+				tid = session['techtid']
+				techphone = form.techphone.data
+				c, conn = connection()
+				if(techphone != session["techphone"]):
+					# too many perethesis, but something is wrong with the the syntax of the intx for statement
+					x = c.execute("SELECT * FROM technicians WHERE phone = (%s)", (thwart(techphone),))
+					conn.commit()
+					if int(x) > 0:
+						#redirect them if they need to recover an old email from and old account
+						flash(u'That phone already has an account, please try a different phone.', 'danger')
+						return render_template('techphone_reset.html', form=form)
+
+				c.execute("UPDATE technicians SET phone = %s WHERE tid = (%s)", (thwart(techphone), tid))
+				conn.commit()
+				flash(u'Phone number successfully changed!', 'success')
+				c.close()
+				conn.close()
+				#so they cant get back in!
+				session['tphconfirm'] = 0
+				return redirect(url_for('techaccount'))
+
+			return render_template("techphone_reset.html", form=form)
+		else:
+			flash(u'Not allowed there!', 'danger')
+			return redirect(url_for('homepage'))
+
+	except Exception as e:
+		return(str(e))
+
+
 
 # #### PROFILE PIC UPLOAD ####
 # # Based after https://gist.github.com/greyli/81d7e5ae6c9baf7f6cdfbf64e8a7c037
@@ -744,69 +1132,6 @@ def login_page():
 		error = "Invalid credentials, try again."
 		return render_template("login.html", error = error)
 
-#PASSWORD CONFIRM
-@app.route('/password_confirm/', methods=['GET','POST'])
-def password_confirm():
-	error = ''
-	try:
-		c, conn = connection()
-		if request.method == "POST":
-			c.execute("SELECT * FROM clients WHERE email = (%s)", (thwart(request.form['email']),))
-			pdata = c.fetchone()[3]
-				
-			if sha256_crypt.verify(request.form['password'], pdata):
-				#putting these close and commit 
-				#functions outside the 'if' will break code
-				conn.commit()
-				c.close()
-				conn.close()
-				session['pconfirm'] = 1
-				flash(u'Successfully authorized.', 'success')
-				return redirect(url_for("password_reset"))
-			
-			else:
-				error = "Invalid credentials, try again."
-
-		return render_template("password_confirm.html", error = error)
-		
-	except Exception as e:
-		error = "Invalid credentials, try again."
-		return render_template("password_confirm.html", error = error)
-
-#CLIENT REGISTER
-class PasswordResetForm(Form):
-	password = PasswordField('Password', [validators.Required(), validators.EqualTo('confirm', message ="Passwords must match.")])
-	confirm = PasswordField('Repeat Password')
-
-# PASSWORD RESET
-@app.route('/password_reset/', methods=['GET','POST'])
-def password_reset():
-	error = ''
-	try:
-		if session['pconfirm'] == 1:
-			form = PasswordResetForm(request.form)
-			if request.method == "POST" and form.validate():
-				cid = session['clientcid']
-				password = sha256_crypt.encrypt((str(form.password.data)))
-				c, conn = connection()
-				c.execute("UPDATE clients SET password = %s WHERE cid = (%s)", (thwart(password), cid))
-				conn.commit()
-				flash(u'Password successfully changed!', 'success')
-				c.close()
-				conn.close()
-				#so they cant get back in!
-				session['pconfirm'] = 0
-				return redirect(url_for('account'))
-
-			return render_template("password_reset.html", form=form)
-		else:
-			flash(u'Not allowed there!', 'danger')
-			return redirect(url_for('homepage'))
-
-	except Exception as e:
-		return(str(e))
-
-
 #TECH LOGIN
 @app.route('/techlogin/', methods=['GET','POST'])
 def tech_login_page():
@@ -838,66 +1163,66 @@ def tech_login_page():
 		error = e
 		return render_template("techlogin.html", error = error)
 
-#PASSWORD CONFIRM
-@app.route('/tech_password_confirm/', methods=['GET','POST'])
-def tech_password_confirm():
-	error = ''
-	try:
-		c, conn = connection()
-		if request.method == "POST":
-			c.execute("SELECT * FROM technicians WHERE email = (%s)", (thwart(request.form['techemail']),))
-			tpdata = c.fetchone()[3]
+# #PASSWORD CONFIRM
+# @app.route('/tech_password_confirm/', methods=['GET','POST'])
+# def tech_password_confirm():
+# 	error = ''
+# 	try:
+# 		c, conn = connection()
+# 		if request.method == "POST":
+# 			c.execute("SELECT * FROM technicians WHERE email = (%s)", (thwart(request.form['techemail']),))
+# 			tpdata = c.fetchone()[3]
 				
-			if sha256_crypt.verify(request.form['techpassword'], tpdata):
-				#putting these close and commit 
-				#functions outside the 'if' will break code
-				conn.commit()
-				c.close()
-				conn.close()
-				session['tpconfirm'] = 1 
-				flash(u'Successfully authorized.', 'success')
-				return redirect(url_for("tech_password_reset"))
+# 			if sha256_crypt.verify(request.form['techpassword'], tpdata):
+# 				#putting these close and commit 
+# 				#functions outside the 'if' will break code
+# 				conn.commit()
+# 				c.close()
+# 				conn.close()
+# 				session['tpconfirm'] = 1 
+# 				flash(u'Successfully authorized.', 'success')
+# 				return redirect(url_for("tech_password_reset"))
 			
-			else:
-				error = "Invalid credentials, try again."
+# 			else:
+# 				error = "Invalid credentials, try again."
 
-		return render_template("tech_password_confirm.html", error = error)
+# 		return render_template("tech_password_confirm.html", error = error)
 		
-	except Exception as e:
-		error = e
-		return render_template("tech_password_confirm.html", error = error)
+# 	except Exception as e:
+# 		error = e
+# 		return render_template("tech_password_confirm.html", error = error)
 
-#CLIENT REGISTER
-class TechPasswordResetForm(Form):
-	techpassword = PasswordField('Password', [validators.Required(), validators.EqualTo('techconfirm', message ="Passwords must match.")])
-	techconfirm = PasswordField('Repeat Password')
+# #CLIENT REGISTER
+# class TechPasswordResetForm(Form):
+# 	techpassword = PasswordField('Password', [validators.Required(), validators.EqualTo('techconfirm', message ="Passwords must match.")])
+# 	techconfirm = PasswordField('Repeat Password')
 
-# PASSWORD RESET
-@app.route('/tech_password_reset/', methods=['GET','POST'])
-def tech_password_reset():
-	error = ''
-	try:
-		if session['tpconfirm'] == 1:
-			form = TechPasswordResetForm(request.form)
-			if request.method == "POST" and form.validate():
-				tid = session['techtid']
-				techpassword = sha256_crypt.encrypt((str(form.techpassword.data)))
-				c, conn = connection()
-				c.execute("UPDATE technicians SET password = %s WHERE tid = (%s)", (thwart(techpassword), tid))
-				conn.commit()
-				flash(u'Password successfully changed!', 'success')
-				c.close()
-				conn.close()
-				#so they cant get back in!
-				session['tpconfirm'] == 0
-				return redirect(url_for('techaccount'))
+# # PASSWORD RESET
+# @app.route('/tech_password_reset/', methods=['GET','POST'])
+# def tech_password_reset():
+# 	error = ''
+# 	try:
+# 		if session['tpconfirm'] == 1:
+# 			form = TechPasswordResetForm(request.form)
+# 			if request.method == "POST" and form.validate():
+# 				tid = session['techtid']
+# 				techpassword = sha256_crypt.encrypt((str(form.techpassword.data)))
+# 				c, conn = connection()
+# 				c.execute("UPDATE technicians SET password = %s WHERE tid = (%s)", (thwart(techpassword), tid))
+# 				conn.commit()
+# 				flash(u'Password successfully changed!', 'success')
+# 				c.close()
+# 				conn.close()
+# 				#so they cant get back in!
+# 				session['tpconfirm'] == 0
+# 				return redirect(url_for('techaccount'))
 
-			return render_template("tech_password_reset.html", form=form)
-		else:
-			flash(u'Not permitted.', 'danger')
-			return redirect(url_for('homepage'))
+# 			return render_template("tech_password_reset.html", form=form)
+# 		else:
+# 			flash(u'Not permitted.', 'danger')
+# 			return redirect(url_for('homepage'))
 
-	except Exception as e:
+# 	except Exception as e:
 		return(str(e))
 	
 #CLIENT REGISTER
@@ -930,9 +1255,13 @@ def register_page():
 
 			#check if already exists
 			x = c.execute("SELECT * FROM clients WHERE email = (%s)", (thwart(email),))
+			y = c.execute("SELECT * FROM clients WHERE phone = (%s)", (thwart(phone),))
 
 			if int(x) > 0:
-				flash(u'That email already has an account, please try a new email or sign in.', 'danger')
+				flash(u'That email already has an account, please try a new email or send an email to help@minute.tech', 'danger')
+				return render_template('register.html', form=form)
+			elif int(y) > 0:
+				flash(u'That phone already has an account, please try a new phone or send an email to help@minute.tech', 'danger')
 				return render_template('register.html', form=form)
 			else:
 				#make sure this default pic is in the correct folder!!
@@ -1002,9 +1331,13 @@ def tech_register_page():
 
 			#check if already exists
 			x = c.execute("SELECT * FROM technicians WHERE email = (%s)", (thwart(techemail),))
+			y = c.execute("SELECT * FROM technicians WHERE phone = (%s)", (thwart(techphone),))
 
 			if int(x) > 0:
-				flash(u'That email already has an account, please try a new email or sign in.', 'danger')
+				flash(u'That email already has an account, please try a new email or send an email to help@minute.tech', 'danger')
+				return render_template('techregister.html', form=form)
+			elif int(y) > 0:
+				flash(u'That phone already has an account, please try a new phone or send an email to help@minute.tech', 'danger')
 				return render_template('techregister.html', form=form)
 			else:
 				default_prof_pic = url_for('static', filename='tech_user_info/prof_pic/default.jpg')
@@ -1047,9 +1380,9 @@ def return_file():
 	#changing the directory does not effect the remote environement, the command doesnt even seem to go through
 	#so I have this here so that when on a local environment, it changes to the proper place so it can pull this file
 	#perhaps try and replace with this (https://stackoverflow.com/questions/17681762/unable-to-retrieve-files-from-send-from-directory-in-flask)
-	os.chdir('C:\Users\Dougroot\Python27\Projects\minutetech-flask\static\legal\\')
-	#return send_file('static\legal\MinutetechLLC_tos.pdf', attachment_filename='MinutetechLLC_tos.pdf')
-	return send_file('MinutetechLLC_tos.pdf', attachment_filename='MinutetechLLC_tos.pdf')
+	#os.chdir('C:\Users\Dougroot\Python27\Projects\minutetech-flask\static\legal\\')
+	return send_file('static/legal/MinutetechLLC_tos.pdf', attachment_filename='MinutetechLLC_tos.pdf')
+	#return send_file('MinutetechLLC_tos.pdf', attachment_filename='MinutetechLLC_tos.pdf')
 
 	
 ############################################ END ACCOUNT SYSTEM #########################################################

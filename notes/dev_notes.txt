@@ -46,6 +46,7 @@ profiles:
 -When we create referral program, link to the register and techregister and techlogin pages
 -Need to check that when a user changes their email, that it does not already exist
 -Need to implement cropping of the photo, flask has a library for this
+-Need to be able to sign in view phone number or email
 
 
 ticketing:

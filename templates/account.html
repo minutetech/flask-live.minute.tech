@@ -41,18 +41,12 @@
 							{% endfor %}
 						</div>
 						<div class="uk-width-1-2@s">
-							{{ form.email.label }}
-							{{ form.email(value=session.email, class_="uk-input") }}
-							{% for error in form.email.errors %}
-							    <span class="uk-label uk-label-danger">{{ error }}</span>
-							{% endfor %}
+							<div style="padding:3.5px;"><b>Email</b> <a href="/email_confirm/">Change</a></div>
+							<div style="border-style: solid; border-width: 1px; border-color: #ebe6e3; padding:9px">{{ session.email }}</div>
 						</div>
 						<div class="uk-width-1-2@s">
-							{{ form.phone.label }}
-							{{ form.phone(value=session.phone, class_="uk-input") }}
-							{% for error in form.phone.errors %}
-							    <span class="uk-label uk-label-danger">{{ error }}</span>
-							{% endfor %}
+							<div style="padding:3.5px;"><b>Phone</b> <a href="/phone_confirm/">Change</a></div>
+							<div style="border-style: solid; border-width: 1px; border-color: #ebe6e3; padding:9px">{{ session.phone }}</div>
 						</div>
 						<div class="uk-width-1"><hr></div>
 						<div class="uk-width-1-6@s">

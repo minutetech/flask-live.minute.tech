@@ -36,18 +36,12 @@
 							{% endfor %}
 						</div>
 						<div class="uk-width-1-2@s">
-							{{ form.techemail.label }}
-							{{ form.techemail(value=session.techemail, class_="uk-input") }}
-							{% for error in form.techemail.errors %}
-							    <span class="uk-label uk-label-danger">{{ error }}</span>
-							{% endfor %}
+							<div style="padding:3.5px;"><b>Email</b> <a href="/techemail_confirm/">Change</a></div>
+							<div style="border-style: solid; border-width: 1px; border-color: #ebe6e3; padding:9px">{{ session.techemail }}</div>
 						</div>
 						<div class="uk-width-1-2@s">
-							{{ form.techphone.label }}
-							{{ form.techphone(value=session.techphone, class_="uk-input") }}
-							{% for error in form.techphone.errors %}
-							    <span class="uk-label uk-label-danger">{{ error }}</span>
-							{% endfor %}
+							<div style="padding:3.5px;"><b>Phone</b> <a href="/techphone_confirm/">Change</a></div>
+							<div style="border-style: solid; border-width: 1px; border-color: #ebe6e3; padding:9px">{{ session.techphone }}</div>
 						</div>
 						<div class="uk-width-1"><hr></div>
 						<div class="uk-width-1-6@s">
@@ -116,7 +110,7 @@
 						<div class="uk-width-1">
 					    	<button class="uk-button uk-button-primary" type="submit" href="#">Submit Changes</button>
 					    	&nbsp;&nbsp;&nbsp;&nbsp;
-					    	<a href="/tech_password_confirm/"><button class="uk-button-small uk-button-danger" type="button">Change Password</button></a>
+					    	<a href="/techpassword_confirm/"><button class="uk-button-small uk-button-danger" type="button">Change Password</button></a>
 					    	<!-- &nbsp;&nbsp;&nbsp;&nbsp;
 					    	<button class="uk-button-small uk-button-default" type="button" href="#">View Public Profile</button> -->
 

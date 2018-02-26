@@ -4,23 +4,23 @@
  
 	{% if session.logged_in == 'client' %}
 				
-		<h2><span uk-icon="icon: unlock; ratio: 2.5"></span> Password Reset</h2>
+		<h2><span uk-icon="icon: unlock; ratio: 2.5"></span> Phone Number Change</h2>
 		<hr>
-			<form class="uk-grid-small uk-background-muted uk-padding" method=post action="/password_reset/" uk-grid>
-				<h4 class="uk-width-1-1">Please enter a new secure, but memorizable password below:</h4>
-				<div class="uk-width-1-2@s">{{ form.password(placeholder="Password", class_="uk-input") }}</div>
-				<div class="uk-width-1-2@s">{{ form.confirm(placeholder="Repeat Password", class_="uk-input") }}</div><br>
+			<form class="uk-grid-small uk-background-muted uk-padding" method=post action="/phone_reset/" uk-grid>
+				<h4 class="uk-width-1-1">Please enter a new phone number below:</h4>
+				<div class="uk-width-1-2@s">{{ form.phone(placeholder="Phone Number", class_="uk-input") }}</div>
+				<div class="uk-width-1-2@s">{{ form.confirm(placeholder="Repeat Phone Number", class_="uk-input") }}</div><br>
 		    	<div class="uk-width-1-1"></div>
 			<input class="uk-button uk-button-primary uk-width-1-4@s" type=submit value=Reset>
 			<div class="uk-width-1-1"></div>
 			<div class="uk-width-1-2@s">
-					{% for error in form.password.errors %}
+					{% for error in form.phone.errors %}
 			        	<span class="uk-label uk-label-danger">{{ error }}</span>
 			    	{% endfor %}
 		    	</div>
 			</form>
 		<hr>
-		<p><a href="/account/" uk-icon="icon: user"></a> Don't want to change your password? <a href="/account/">Go to account.</a></p>
+		<p><a href="/account/" uk-icon="icon: user"></a> Don't want to change your phone number? <a href="/account/">Go to account.</a></p>
 	
 	 
 	{% elif session.logged_in == 'tech' %}	
