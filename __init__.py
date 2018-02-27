@@ -70,7 +70,7 @@ def test():
 
 class AskForm(Form):
 	body = TextAreaField('Desciption', [validators.Length(min=10, max=2000)])
-	
+
 @app.route('/', methods=['GET','POST'])
 def homepage():
 	#if user posts a question to the pool
@@ -1388,4 +1388,4 @@ def return_file():
 ############################################ END ACCOUNT SYSTEM #########################################################
 
 if __name__ == "__main__":
-	app.run(debug=True)
+	app.run(debug=False)
