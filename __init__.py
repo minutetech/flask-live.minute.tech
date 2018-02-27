@@ -20,6 +20,8 @@ from flask_wtf.file import FileField, FileRequired, FileAllowed
 # For secure file uploads
 from werkzeug.utils import secure_filename
 from flask_uploads import UploadSet, configure_uploads, IMAGES, patch_request_class
+from flask_mail import Mail, Message
+from itsdangerous import URLSafeTimedSerializer #email confirmation link that has a short lifespan
 # To encrypt the password
 from passlib.hash import sha256_crypt
 # For SQL injection
@@ -30,6 +32,10 @@ from dbconnect import connection
 # UPLOAD_FOLDER = '/var/www/FlaskApp/FlaskApp/static/user_info/prof_pic'
 # ALLOWED_EXTENSIONS = set(['png','jpg','jpeg','gif'])
 app = Flask(__name__, static_folder='static')
+#For Flask Mail
+app.config.from_pyfile('config.cfg')
+mail = Mail(app)
+s = URLSafeTimedSerializer(app.config['SECRET_KEY']) #token for email confirmation
 # app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 # Key cross-referenced from flaskapp.wsgi
 app.config['SECRET_KEY'] = 'quincyisthebestdog11'
@@ -42,36 +48,29 @@ app.config['TESTING'] = False #turns reacaptcha off/on
 
 #temporary to ask questions on homepage
 #will eventually want a new user to be able to type a question out, but directed to sign up page immediatly, but their question is still saved and placed in database
-class AskForm(Form):
-	# difficulty = RadioField('Difficulty Rating', choices = [('1','1'), ('2','2'),('3','3'),('4','4'),('5','5')])
-	# title = TextField('Title:', [validators.Length(min=5, max=100)])
-	body = TextAreaField('Desciption', [validators.Length(min=10, max=2000)])
-	# tags = TextField('Tags:', [validators.Optional()])
+
 
 ############################ PAGES #################################
-# #/var/www/FlaskApp/FlaskApp/static/user_info/prof_pic
-# def allowed_file(filename):
-# 	return '.' in filename and \
-# 		filename.rsplit('.',1)[1].lower() in ALLOWED_EXTENSIONS
 
-# @app.route('/test/', methods=['GET','POST'])
-# def test():
-# 	if request.method == 'POST':
-# 		if 'file' not in request.files:
-# 			flash('No file part')
-# 			return redirect(request.url)
-# 		file = request.files['file']
-# 		if file.filename == '':
-# 			flash('No selected file')
-# 			return redirect(request.url)
-# 		if file and allowed_file(file.filename):
-# 			filename = secure_filename(file.filename)
-# 			file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
-# 			return redirect(url_for('test', filename = filename))
-# 	return render_template("test.html")
+@app.route('/test/', methods=['GET','POST'])
+def test():
+	try:
+		msg = Message("Forgot Password",
+			sender = "admin@minute.tech",
+			recipients=["douglasrcjames@gmail.com"])
+		msg.body = "Hello, you have requested a new password becuase you may have forgot it, here is a link to reset it"
+		#msg.html = render_template('reset_password', email=email, link=link)
+		mail.send(msg)
+		return 'Mail sent'
+
+	except Exception as e:
+		return str(e)
+	
 
 
-
+class AskForm(Form):
+	body = TextAreaField('Desciption', [validators.Length(min=10, max=2000)])
+	
 @app.route('/', methods=['GET','POST'])
 def homepage():
 	#if user posts a question to the pool

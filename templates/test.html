@@ -2,14 +2,13 @@
  
 {% block body %}
  
-  <h2><span uk-icon="icon: pencil; ratio: 2.5"></span> Upload file: </h2>
+  <h2><span uk-icon="icon: pencil; ratio: 2.5"></span> Email confirm: </h2>
   <hr>   
-	<p> 
-		<form method="POST" action="{{ url_for('test') }}" enctype="multipart/form-data">
-		    <input type=file name=file>
-		    <br>
-		    <input type="submit" value="Upload">
-		</form>
+	<p> <form action="/test/" method="POST">
+		<input name="email">
+		<input type="submit">
+	</form>
+		
 	<hr>
 	</p>    
              

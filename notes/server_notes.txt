@@ -47,6 +47,7 @@ $ pip install WTForms
 $ pip install Flask-WTF
 $ pip install passlib
 $ pip install flask_uploads
+$ pip install flask_mail
 
 $ pip install mysqlclient 
 -THIS CAUSED A BIG ERROR on windows, probably has to do with Python Version 3.7 not supported
