@@ -33,11 +33,10 @@ app = Flask(__name__, static_folder='static')
 # app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 # Key cross-referenced from flaskapp.wsgi
 app.config['SECRET_KEY'] = 'quincyisthebestdog11'
-
+app.config['RECAPTCHA_PUBLIC_KEY'] = '6Lc54UgUAAAAAPj5zf-R_pmKlnC_gBQSQ7EYfkzU'
+app.config['RECAPTCHA_PRIVATE_KEY'] = '6Lc54UgUAAAAAKvQv4x3QaYwKx5iZHAWiTO8Ft05'
+app.config['TESTING'] = False #turns reacaptcha off/on
 ## GLOBALS
-# For selecting question from list
-select_q = 0
-
 
 #############  FUNCTIONS  ##################
 
@@ -310,7 +309,7 @@ class EditAccountForm(Form):
 	#phone = TextField('Phone Number', [validators.Length(min=10, max=20)])
 	address = TextField('Street Address', [validators.Length(min=6, max=100)])
 	city = TextField('City', [validators.Length(min=2, max=50)])
-	state = TextField('State', [validators.Length(min=2, max=2)])
+	state = TextField('State', [validators.Length(min=2, max=50)])
 	czip = TextField('ZIP', [validators.Length(min=2, max=16)])
 	birth_month = TextField('Birthday', [validators.Length(min=2, max=16)])
 	birth_day = TextField('&nbsp;', [validators.Length(min=1, max=2)])
@@ -687,7 +686,7 @@ class TechEditAccountForm(Form):
 	# techphone = TextField('Phone Number', [validators.Length(min=10, max=20)])
 	techaddress = TextField('Street Address', [validators.Length(min=6, max=100)])
 	techcity = TextField('City', [validators.Length(min=2, max=50)])
-	techstate = TextField('State', [validators.Length(min=2, max=2)])
+	techstate = TextField('State', [validators.Length(min=2, max=50)])
 	techzip = TextField('ZIP', [validators.Length(min=2, max=16)])
 	techbirth_month = TextField('Birthday', [validators.Length(min=2, max=16)])
 	techbirth_day = TextField('&nbsp;', [validators.Length(min=1, max=2)])
@@ -1234,6 +1233,7 @@ class RegistrationForm(Form):
 	czip = TextField('ZIP', [validators.Length(min=2, max=16)])
 	password = PasswordField('Password', [validators.Required(), validators.EqualTo('confirm', message ="Passwords must match.")])
 	confirm = PasswordField('Repeat Password')
+	recaptcha = RecaptchaField()
 
 @app.route('/register/', methods=['GET','POST'])
 def register_page():
@@ -1306,10 +1306,11 @@ class TechRegistrationForm(Form):
 	techaddress = TextField('Street Address', [validators.Length(min=6, max=100)])
 	techcity = TextField('City', [validators.Length(min=2, max=50)])
 	#('what we see','what they see')
-	techstate = TextField('State', [validators.Length(min=2, max=2)])
+	techstate = TextField('State', [validators.Length(min=2, max=50)])
 	techzip = TextField('ZIP', [validators.Length(min=2, max=16)])
 	techpassword = PasswordField('Password', [validators.Required(), validators.EqualTo('techconfirm', message ="Passwords must match.")])
 	techconfirm = PasswordField('Repeat Password')
+	recaptcha = RecaptchaField()
 	
 @app.route('/techregister/', methods=['GET','POST'])
 def tech_register_page():

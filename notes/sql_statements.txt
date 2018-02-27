@@ -7,8 +7,8 @@ DROP TABLE technicians;
 
 CREATE TABLE clients(
 cid BIGINT UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY,
-phone VARCHAR(255),
-email VARCHAR(255),
+phone VARCHAR(255) UNIQUE,
+email VARCHAR(255) UNIQUE,
 password VARCHAR(255),
 rating INT(4) DEFAULT 500);
 
@@ -18,7 +18,7 @@ first_name VARCHAR(255),
 last_name VARCHAR(255),
 address VARCHAR(255) DEFAULT 'Not Provided',
 city VARCHAR(255) DEFAULT 'Not Provided',
-state VARCHAR(3) DEFAULT 'NA',
+state VARCHAR(100) DEFAULT 'NA',
 zip VARCHAR(16),
 birth_year INT(5) DEFAULT '1899',
 birth_month VARCHAR(10) DEFAULT 'January',
@@ -34,8 +34,8 @@ FOREIGN KEY(cid) REFERENCES clients(cid));
 
 CREATE TABLE technicians(
 tid BIGINT UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY,
-phone VARCHAR(255),
-email VARCHAR(255),
+phone VARCHAR(255) UNIQUE,
+email VARCHAR(255) UNIQUE,
 password VARCHAR(255),
 rating INT(4) DEFAULT 500);
 
@@ -45,7 +45,7 @@ first_name VARCHAR(255),
 last_name VARCHAR(255),
 address VARCHAR(255),
 city VARCHAR(255),
-state VARCHAR(3),
+state VARCHAR(100),
 zip VARCHAR(16),
 birth_year INT(5) DEFAULT '1800',
 birth_month VARCHAR(10) DEFAULT 'January',
