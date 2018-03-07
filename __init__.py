@@ -21,7 +21,7 @@ from flask_wtf.file import FileField, FileRequired, FileAllowed
 from werkzeug.utils import secure_filename
 from flask_uploads import UploadSet, configure_uploads, IMAGES, patch_request_class
 from flask_mail import Mail, Message
-from itsdangerous import URLSafeTimedSerializer #email confirmation link that has a short lifespan
+from itsdangerous import URLSafeTimedSerializer, SignatureExpired #email confirmation link that has a short lifespan
 # To encrypt the password
 from passlib.hash import sha256_crypt
 # For SQL injection
@@ -32,13 +32,14 @@ from dbconnect import connection
 # UPLOAD_FOLDER = '/var/www/FlaskApp/FlaskApp/static/user_info/prof_pic'
 # ALLOWED_EXTENSIONS = set(['png','jpg','jpeg','gif'])
 app = Flask(__name__, static_folder='static')
+# Key cross-referenced from flaskapp.wsgi
+app.config['SECRET_KEY'] = 'quincyisthebestdog11'
 #For Flask Mail
 app.config.from_pyfile('config.cfg')
 mail = Mail(app)
 s = URLSafeTimedSerializer(app.config['SECRET_KEY']) #token for email confirmation
 # app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
-# Key cross-referenced from flaskapp.wsgi
-app.config['SECRET_KEY'] = 'quincyisthebestdog11'
+
 app.config['RECAPTCHA_PUBLIC_KEY'] = '6Lc54UgUAAAAAPj5zf-R_pmKlnC_gBQSQ7EYfkzU'
 app.config['RECAPTCHA_PRIVATE_KEY'] = '6Lc54UgUAAAAAKvQv4x3QaYwKx5iZHAWiTO8Ft05'
 app.config['TESTING'] = False #turns reacaptcha off/on
@@ -48,26 +49,25 @@ app.config['TESTING'] = False #turns reacaptcha off/on
 
 #temporary to ask questions on homepage
 #will eventually want a new user to be able to type a question out, but directed to sign up page immediatly, but their question is still saved and placed in database
-
-
-############################ PAGES #################################
-
 @app.route('/test/', methods=['GET','POST'])
 def test():
+	error = ''
 	try:
-		msg = Message("Forgot Password",
-			sender = "admin@minute.tech",
-			recipients=["douglasrcjames@gmail.com"])
-		msg.body = "Hello, you have requested a new password becuase you may have forgot it, here is a link to reset it"
-		#msg.html = render_template('reset_password', email=email, link=link)
-		mail.send(msg)
-		return 'Mail sent'
+		c, conn = connection()
+		if request.method == "POST":
+			msg = Message("Minute.tech - Email Verification", sender = "admin@minute.tech", recipients=[session['email']])
+			msg.body = render_template('email_verify.txt')
+			msg.html = render_template('email_verify.html')
+			mail.send(msg)
+			flash(u'Submitted', 'success')
+			return redirect(url_for('test'))
+
+		return render_template("test.html", error = error)
 
 	except Exception as e:
-		return str(e)
-	
+		return render_template("500.html", error = e)
 
-
+############################ PAGES #################################
 class AskForm(Form):
 	body = TextAreaField('Desciption', [validators.Length(min=10, max=2000)])
 
@@ -100,8 +100,6 @@ def homepage():
 	else:
 		error = "We couldn't post your question, please make sure you filled out all the fields properly and try again!"
 		return render_template("main.html", form=form)
-
-#NEED DATABASE FOR THIS
 
 class ContactForm(Form):
 	message = TextAreaField('Message', [validators.Length(min=10, max=2000)])
@@ -417,6 +415,7 @@ def account():
 				session['birth_day'] = birth_day
 				session['birth_year'] = birth_year
 				session['bio'] = bio
+
 				flash(u'Your account is successfully updated.', 'success')
 				return redirect(url_for('account'))
 		else:
@@ -1160,68 +1159,6 @@ def tech_login_page():
 	except Exception as e:
 		error = e
 		return render_template("techlogin.html", error = error)
-
-# #PASSWORD CONFIRM
-# @app.route('/tech_password_confirm/', methods=['GET','POST'])
-# def tech_password_confirm():
-# 	error = ''
-# 	try:
-# 		c, conn = connection()
-# 		if request.method == "POST":
-# 			c.execute("SELECT * FROM technicians WHERE email = (%s)", (thwart(request.form['techemail']),))
-# 			tpdata = c.fetchone()[3]
-				
-# 			if sha256_crypt.verify(request.form['techpassword'], tpdata):
-# 				#putting these close and commit 
-# 				#functions outside the 'if' will break code
-# 				conn.commit()
-# 				c.close()
-# 				conn.close()
-# 				session['tpconfirm'] = 1 
-# 				flash(u'Successfully authorized.', 'success')
-# 				return redirect(url_for("tech_password_reset"))
-			
-# 			else:
-# 				error = "Invalid credentials, try again."
-
-# 		return render_template("tech_password_confirm.html", error = error)
-		
-# 	except Exception as e:
-# 		error = e
-# 		return render_template("tech_password_confirm.html", error = error)
-
-# #CLIENT REGISTER
-# class TechPasswordResetForm(Form):
-# 	techpassword = PasswordField('Password', [validators.Required(), validators.EqualTo('techconfirm', message ="Passwords must match.")])
-# 	techconfirm = PasswordField('Repeat Password')
-
-# # PASSWORD RESET
-# @app.route('/tech_password_reset/', methods=['GET','POST'])
-# def tech_password_reset():
-# 	error = ''
-# 	try:
-# 		if session['tpconfirm'] == 1:
-# 			form = TechPasswordResetForm(request.form)
-# 			if request.method == "POST" and form.validate():
-# 				tid = session['techtid']
-# 				techpassword = sha256_crypt.encrypt((str(form.techpassword.data)))
-# 				c, conn = connection()
-# 				c.execute("UPDATE technicians SET password = %s WHERE tid = (%s)", (thwart(techpassword), tid))
-# 				conn.commit()
-# 				flash(u'Password successfully changed!', 'success')
-# 				c.close()
-# 				conn.close()
-# 				#so they cant get back in!
-# 				session['tpconfirm'] == 0
-# 				return redirect(url_for('techaccount'))
-
-# 			return render_template("tech_password_reset.html", form=form)
-# 		else:
-# 			flash(u'Not permitted.', 'danger')
-# 			return redirect(url_for('homepage'))
-
-# 	except Exception as e:
-		return(str(e))
 	
 #CLIENT REGISTER
 class RegistrationForm(Form):
@@ -1288,6 +1225,14 @@ def register_page():
 				session['bio'] = bio
 				#change this when the server goes live to the proper folder
 				session['prof_pic'] = default_prof_pic
+
+				# # Send confirmation email
+				# token = s.dumps(email, salt='email-confirm')
+				# msg = Message("Minute.tech - Email Verification", sender = "admin@minute.tech", recipients=[email])
+				# link = url_for('email_verify', token=token, _external=True)
+				# msg.body = render_template('email_verify.txt', link=link, first_name=first_name)
+				# msg.html = render_template('email_verify.html', link=link, first_name=first_name)
+				# mail.send(msg)
 				return redirect(url_for('account'))
 
 		return render_template("register.html", form=form)
@@ -1295,6 +1240,18 @@ def register_page():
 
 	except Exception as e:
 		return(str(e))
+
+# @app.route('/email_verify/<token>')
+# def email_verify(token):
+# 	try:
+# 		email = s.loads(token, salt='email-confirm', max_age=3600)
+
+# 	except SignatureExpired:
+# 		flash(u'The token has expired', 'danger')
+# 		return redirect(url_for('homepage'))
+
+# 	flash(u'Emaill successfully verified!', 'success')
+# 	return redirect(url_for('homepage'))
 
 #TECH REGISTER
 class TechRegistrationForm(Form):
@@ -1304,7 +1261,6 @@ class TechRegistrationForm(Form):
 	techphone = TextField('Phone Number', [validators.Length(min=10, max=20)])
 	techaddress = TextField('Street Address', [validators.Length(min=6, max=100)])
 	techcity = TextField('City', [validators.Length(min=2, max=50)])
-	#('what we see','what they see')
 	techstate = TextField('State', [validators.Length(min=2, max=50)])
 	techzip = TextField('ZIP', [validators.Length(min=2, max=16)])
 	techpassword = PasswordField('Password', [validators.Required(), validators.EqualTo('techconfirm', message ="Passwords must match.")])
@@ -1376,16 +1332,19 @@ def tech_register_page():
 ## Sending Files ##
 
 @app.route('/MinutetechLLC_tos/')
-def return_file():
-	#changing the directory does not effect the remote environement, the command doesnt even seem to go through
-	#so I have this here so that when on a local environment, it changes to the proper place so it can pull this file
-	#perhaps try and replace with this (https://stackoverflow.com/questions/17681762/unable-to-retrieve-files-from-send-from-directory-in-flask)
-	#os.chdir('C:\Users\Dougroot\Python27\Projects\minutetech-flask\static\legal\\')
+def return_tos():
 	return send_file('static/legal/MinutetechLLC_tos.pdf', attachment_filename='MinutetechLLC_tos.pdf')
-	#return send_file('MinutetechLLC_tos.pdf', attachment_filename='MinutetechLLC_tos.pdf')
 
+#need to make sure this works, doesnt work on local host
+@app.route('/Minutetech_Logo/')
+def return_logo():
+	return send_file('static/images/Icon_1000x1000px.png', attachment_filename='Icon_1000x1000px.png')
+
+@app.route('/file_downloads/')
+def file_downloads():
 	
+    return render_template('downloads.html')
 ############################################ END ACCOUNT SYSTEM #########################################################
 
 if __name__ == "__main__":
-	app.run(debug=False)
+	app.run(debug=True)
