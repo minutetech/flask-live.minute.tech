@@ -1335,7 +1335,6 @@ def tech_register_page():
 def return_tos():
 	return send_file('static/legal/MinutetechLLC_tos.pdf', attachment_filename='MinutetechLLC_tos.pdf')
 
-#need to make sure this works, doesnt work on local host
 @app.route('/Minutetech_Logo/')
 def return_logo():
 	return send_file('static/images/Icon_1000x1000px.png', attachment_filename='Icon_1000x1000px.png')
@@ -1343,6 +1342,10 @@ def return_logo():
 @app.route('/coffee-lady/')
 def return_pic1():
 	return send_file('static/images/pexels-photo-374897.jpeg', attachment_filename='pexels-photo-374897.jpeg')
+
+@app.route('/Minutetech_Long_Logo/')
+def return_logo_long():
+	return send_file('static/images/Secondary_long.png', attachment_filename='Secondary_long.png')
 
 @app.route('/file_downloads/')
 def file_downloads():
