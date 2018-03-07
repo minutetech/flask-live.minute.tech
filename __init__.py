@@ -1340,9 +1340,12 @@ def return_tos():
 def return_logo():
 	return send_file('static/images/Icon_1000x1000px.png', attachment_filename='Icon_1000x1000px.png')
 
+@app.route('/coffee-lady/')
+def return_pic1():
+	return send_file('static/images/pexels-photo-374897.jpeg', attachment_filename='pexels-photo-374897.jpeg')
+
 @app.route('/file_downloads/')
 def file_downloads():
-	
     return render_template('downloads.html')
 ############################################ END ACCOUNT SYSTEM #########################################################
 
