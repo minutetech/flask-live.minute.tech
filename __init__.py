@@ -1087,7 +1087,7 @@ def login_required(f):
 			return f(*args, **kwargs)
 		else:
 			flash(u'You need to login first.', 'danger')
-			return redirect(url_for('login_page'))
+			return redirect(url_for('login'))
 	return wrap
 
 @app.route('/logout/', methods=['GET','POST'])
@@ -1100,7 +1100,7 @@ def logout():
 	
 #CLIENT LOGIN
 @app.route('/login/', methods=['GET','POST'])
-def login_page():
+def login():
 	error = ''
 	try:
 		c, conn = connection()
@@ -1131,7 +1131,7 @@ def login_page():
 
 #TECH LOGIN
 @app.route('/techlogin/', methods=['GET','POST'])
-def tech_login_page():
+def tech_login():
 	error = ''
 	try:
 		c, conn = connection()
@@ -1245,28 +1245,32 @@ def register_page():
 def email_verify(token):
 	try:
 		c, conn = connection()
-		email = s.loads(token, salt='email-confirm', max_age=3600)
-		if session['logged_in'] == 'client':
-			cid = session['clientcid']
-			c.execute("UPDATE cpersonals SET email_verify = 1 WHERE cid = (%s)", (cid,))
-			conn.commit()
-			c.close()
-			conn.close()
-		elif session['logged_in'] == 'tech':
-			tid = session['techtid']
-			c.execute("UPDATE tpersonals SET email_verify = 1 WHERE tid = (%s)", (tid,))
-			conn.commit()
-			c.close()
-			conn.close()
+		if session.get('logged_in') == True:
+			email = s.loads(token, salt='email-confirm', max_age=3600)
+			if session['logged_in'] == 'client':
+				cid = session['clientcid']
+				c.execute("UPDATE cpersonals SET email_verify = 1 WHERE cid = (%s)", (cid,))
+				conn.commit()
+				c.close()
+				conn.close()
+				return redirect(url_for('account'))
+
+			elif session['logged_in'] == 'tech':
+				tid = session['techtid']
+				c.execute("UPDATE tpersonals SET email_verify = 1 WHERE tid = (%s)", (tid,))
+				conn.commit()
+				c.close()
+				conn.close()
+				return redirect(url_for('techaccount'))
+
+			flash(u'Email successfully verified!', 'success')
 		else:
 			flash(u'Log in first, then click the link again', 'danger')
 			redirect(url_for('login'))
+
 	except SignatureExpired:
 		flash(u'The token has expired', 'danger')
 		return redirect(url_for('homepage'))
-
-	flash(u'Email successfully verified!', 'success')
-	return redirect(url_for('homepage'))
 
 #TECH REGISTER
 class TechRegistrationForm(Form):
@@ -1356,20 +1360,20 @@ def return_logo():
 
 @app.route('/coffee-lady/')
 def return_pic1():
-	return send_file('static/images/girl_small-email-header.jpeg', attachment_filename='girl_small-email-header.jpeg')
+	return send_file('static/images/lady-logo-email-banner.png', attachment_filename='lady-logo-email-banner.png')
 
 @app.route('/Minutetech_Long_Logo/')
 def return_logo_long():
 	return send_file('static/images/Secondary_long.png')
 
-# Univers Black
-@app.route('/Minutetech_font_black/')
-def return_font_black():
-	return send_file('static/media/fonts/Univers/Univers-Black.otf')
-# Univers Light Condensed
-@app.route('/Minutetech_font_light/')
-def return_font_light():
-	return send_file('static/media/fonts/Univers/Univers-CondensedLight.otf')
+# # Univers Black
+# @app.route('/Minutetech_font_black/')
+# def return_font_black():
+# 	return send_file('static/media/fonts/Univers/Univers-Black.otf')
+# # Univers Light Condensed
+# @app.route('/Minutetech_font_light/')
+# def return_font_light():
+# 	return send_file('static/media/fonts/Univers/Univers-CondensedLight.otf')
 
 @app.route('/file_downloads/')
 def file_downloads():
