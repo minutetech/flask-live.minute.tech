@@ -1366,6 +1366,10 @@ def return_pic1():
 def return_logo_long():
 	return send_file('static/images/Secondary_long.png')
 
+@app.route('/Minutetech_rocket_ship/')
+def return_tocket_ship():
+	return send_file('static/flat-icons/008-startup.png')
+
 # # Univers Black
 # @app.route('/Minutetech_font_black/')
 # def return_font_black():
