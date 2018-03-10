@@ -1341,11 +1341,11 @@ def return_logo():
 
 @app.route('/coffee-lady/')
 def return_pic1():
-	return send_file('static/images/pexels-photo-374897.jpeg', attachment_filename='pexels-photo-374897.jpeg')
+	return send_file('static/images/girl_small-email-header.jpeg', attachment_filename='girl_small-email-header.jpeg')
 
 @app.route('/Minutetech_Long_Logo/')
 def return_logo_long():
-	return send_file('static/images/Secondary_long.png', attachment_filename='Secondary_long.png')
+	return send_file('static/images/Secondary_long.png')
 
 @app.route('/file_downloads/')
 def file_downloads():
