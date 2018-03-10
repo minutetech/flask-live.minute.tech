@@ -1226,13 +1226,13 @@ def register_page():
 				#change this when the server goes live to the proper folder
 				session['prof_pic'] = default_prof_pic
 
-				# # Send confirmation email
-				# token = s.dumps(email, salt='email-confirm')
-				# msg = Message("Minute.tech - Email Verification", sender = "admin@minute.tech", recipients=[email])
-				# link = url_for('email_verify', token=token, _external=True)
-				# msg.body = render_template('email_verify.txt', link=link, first_name=first_name)
-				# msg.html = render_template('email_verify.html', link=link, first_name=first_name)
-				# mail.send(msg)
+				# Send confirmation email
+				token = s.dumps(email, salt='email-confirm')
+				msg = Message("Minute.tech - Email Verification", sender = "admin@minute.tech", recipients=[email])
+				link = url_for('email_verify', token=token, _external=True)
+				msg.body = render_template('email_verify.txt', link=link, first_name=first_name)
+				msg.html = render_template('email_verify.html', link=link, first_name=first_name)
+				mail.send(msg)
 				return redirect(url_for('account'))
 
 		return render_template("register.html", form=form)
@@ -1241,17 +1241,32 @@ def register_page():
 	except Exception as e:
 		return(str(e))
 
-# @app.route('/email_verify/<token>')
-# def email_verify(token):
-# 	try:
-# 		email = s.loads(token, salt='email-confirm', max_age=3600)
+@app.route('/email_verify/<token>')
+def email_verify(token):
+	try:
+		c, conn = connection()
+		email = s.loads(token, salt='email-confirm', max_age=3600)
+		if session['logged_in'] == 'client':
+			cid = session['clientcid']
+			c.execute("UPDATE cpersonals SET email_verify = 1 WHERE cid = (%s)", (cid,))
+			conn.commit()
+			c.close()
+			conn.close()
+		elif session['logged_in'] == 'tech':
+			tid = session['techtid']
+			c.execute("UPDATE tpersonals SET email_verify = 1 WHERE tid = (%s)", (tid,))
+			conn.commit()
+			c.close()
+			conn.close()
+		else:
+			flash(u'Log in first, then click the link again', 'danger')
+			redirect(url_for('login'))
+	except SignatureExpired:
+		flash(u'The token has expired', 'danger')
+		return redirect(url_for('homepage'))
 
-# 	except SignatureExpired:
-# 		flash(u'The token has expired', 'danger')
-# 		return redirect(url_for('homepage'))
-
-# 	flash(u'Emaill successfully verified!', 'success')
-# 	return redirect(url_for('homepage'))
+	flash(u'Email successfully verified!', 'success')
+	return redirect(url_for('homepage'))
 
 #TECH REGISTER
 class TechRegistrationForm(Form):
@@ -1346,6 +1361,15 @@ def return_pic1():
 @app.route('/Minutetech_Long_Logo/')
 def return_logo_long():
 	return send_file('static/images/Secondary_long.png')
+
+# Univers Black
+@app.route('/Minutetech_font_black/')
+def return_font_black():
+	return send_file('static/media/fonts/Univers/Univers-Black.otf')
+# Univers Light Condensed
+@app.route('/Minutetech_font_light/')
+def return_font_light():
+	return send_file('static/media/fonts/Univers/Univers-CondensedLight.otf')
 
 @app.route('/file_downloads/')
 def file_downloads():
