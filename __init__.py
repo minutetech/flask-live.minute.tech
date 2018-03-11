@@ -1246,9 +1246,9 @@ def email_verify(token):
 	try:
 		c, conn = connection()
 		if session.get('logged_in') == True:
-			email = s.loads(token, salt='email-confirm', max_age=3600)
 			if session['logged_in'] == 'client':
 				cid = session['clientcid']
+				email = s.loads(token, salt='email-confirm', max_age=3600)
 				c.execute("UPDATE cpersonals SET email_verify = 1 WHERE cid = (%s)", (cid,))
 				conn.commit()
 				c.close()
@@ -1257,6 +1257,7 @@ def email_verify(token):
 
 			elif session['logged_in'] == 'tech':
 				tid = session['techtid']
+				email = s.loads(token, salt='email-confirm', max_age=3600)
 				c.execute("UPDATE tpersonals SET email_verify = 1 WHERE tid = (%s)", (tid,))
 				conn.commit()
 				c.close()
