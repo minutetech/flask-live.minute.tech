@@ -116,7 +116,7 @@ def about():
 			email = form.email.data
 			
 			# Get user ID
-			if session.get('logged_in') == True:
+			if 'logged_in' in session:
 				if session['logged_in'] == 'client':
 					uid = session['clientcid']
 				if session['logged_in'] == 'tech':
@@ -1245,10 +1245,10 @@ def register_page():
 def email_verify(token):
 	try:
 		c, conn = connection()
-		if session.get('logged_in') == True:
+		if if 'logged_in' in session:
+			email = s.loads(token, salt='email-confirm', max_age=3600)
 			if session['logged_in'] == 'client':
 				cid = session['clientcid']
-				email = s.loads(token, salt='email-confirm', max_age=3600)
 				c.execute("UPDATE cpersonals SET email_verify = 1 WHERE cid = (%s)", (cid,))
 				conn.commit()
 				c.close()
@@ -1257,17 +1257,16 @@ def email_verify(token):
 
 			elif session['logged_in'] == 'tech':
 				tid = session['techtid']
-				email = s.loads(token, salt='email-confirm', max_age=3600)
 				c.execute("UPDATE tpersonals SET email_verify = 1 WHERE tid = (%s)", (tid,))
 				conn.commit()
 				c.close()
 				conn.close()
 				return redirect(url_for('techaccount'))
-
 			flash(u'Email successfully verified!', 'success')
 		else:
 			flash(u'Log in first, then click the link again', 'danger')
 			return redirect(url_for('login'))
+
 		render_template("main.html")
 	except SignatureExpired:
 		flash(u'The token has expired', 'danger')
@@ -1325,6 +1324,7 @@ def tech_register_page():
 				conn.close()
 
 				session['logged_in'] = 'tech'
+
 				#tid will be inputted once generated
 				session['techtid'] = 0
 				session['techemail'] = techemail
