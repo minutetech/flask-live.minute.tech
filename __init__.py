@@ -1253,6 +1253,7 @@ def email_verify(token):
 				conn.commit()
 				c.close()
 				conn.close()
+				flash(u'Email successfully verified!', 'success')
 				return redirect(url_for('account'))
 
 			elif session['logged_in'] == 'tech':
@@ -1261,8 +1262,9 @@ def email_verify(token):
 				conn.commit()
 				c.close()
 				conn.close()
+				flash(u'Email successfully verified!', 'success')
 				return redirect(url_for('techaccount'))
-			flash(u'Email successfully verified!', 'success')
+			
 		else:
 			flash(u'Log in first, then click the link again', 'danger')
 			return redirect(url_for('login'))
