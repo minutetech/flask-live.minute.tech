@@ -1245,7 +1245,7 @@ def register_page():
 def email_verify(token):
 	try:
 		c, conn = connection()
-		if if 'logged_in' in session:
+		if 'logged_in' in session:
 			email = s.loads(token, salt='email-confirm', max_age=3600)
 			if session['logged_in'] == 'client':
 				cid = session['clientcid']
