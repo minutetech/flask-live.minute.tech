@@ -1268,7 +1268,7 @@ def email_verify(token):
 		else:
 			flash(u'Log in first, then click the link again', 'danger')
 			return redirect(url_for('login'))
-
+		render_template("main.html")
 	except SignatureExpired:
 		flash(u'The token has expired', 'danger')
 		return redirect(url_for('homepage'))
