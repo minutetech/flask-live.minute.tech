@@ -632,47 +632,47 @@ def phone_reset():
 	except Exception as e:
 		return(str(e))
 
-#### PROFILE PIC UPLOAD ####
-# Based after https://gist.github.com/greyli/81d7e5ae6c9baf7f6cdfbf64e8a7c037
-# For uploading files
+# #### PROFILE PIC UPLOAD ####
+# # Based after https://gist.github.com/greyli/81d7e5ae6c9baf7f6cdfbf64e8a7c037
+# # For uploading files
 
-ALLOWED_EXTENSIONS = set(['png', 'jpg', 'jpeg', 'gif'])
-# /var/www/FlaskApp/FlaskApp/static/legal/MinutetechLLC_tos.pdf
-app.config['UPLOADED_PHOTOS_DEST'] = 'var/www/FlaskApp/FlaskApp/static/user_info/prof_pic'
-photos = UploadSet('photos', IMAGES)
-configure_uploads(app, photos)
-patch_request_class(app)  # set maximum file size, default is 16MB
+# ALLOWED_EXTENSIONS = set(['png', 'jpg', 'jpeg', 'gif'])
+# # /var/www/FlaskApp/FlaskApp/static/legal/MinutetechLLC_tos.pdf
+# app.config['UPLOADED_PHOTOS_DEST'] = 'static/user_info/prof_pic'
+# photos = UploadSet('photos', IMAGES)
+# configure_uploads(app, photos)
+# patch_request_class(app)  # set maximum file size, default is 16MB
 
-class ProfilePictureForm(FlaskForm):
-	prof_pic = FileField(validators=[FileAllowed(photos, u'Image only!')])
+# class ProfilePictureForm(FlaskForm):
+# 	prof_pic = FileField(validators=[FileAllowed(photos, u'Image only!')])
 
-@app.route('/profile_picture_upload/', methods=['GET','POST'])
-def profile_picture_upload():
-	form = ProfilePictureForm()
-	cid = str(session['clientcid'])
-	first_name = session['first_name']
-	#default_prof_pic = 'app/uploads/photos/static/user_info/prof_pic/default.jpg'
-	#user_prof_pic = cid+'_'+first_name+'_'+'.png'
-	if form.validate_on_submit():
-		# Checks if the prof_pic is set yet. if set, then dont need to delete the old picture on the server
-		if session['prof_pic'] != url_for('static', filename='user_info/prof_pic/default.jpg'):
-			#need to delete or move the old prof_pic if it was set! Prevents users from adding too many pictures
-			os.remove('static/user_info/prof_pic/'+cid+'_'+first_name+'.png')
-			flash(u'Your account is successfully updated.', 'success')
-			flash("You already have a file on the server!")
-		filename = photos.save(form.prof_pic.data, name=cid+'_'+first_name+'.png')
-		file_url = photos.url(filename) 
-		session['prof_pic'] = file_url
-		c, conn = connection()
-		c.execute("UPDATE cpersonals SET prof_pic = %s WHERE cid = (%s)", (file_url, cid))
+# @app.route('/profile_picture_upload/', methods=['GET','POST'])
+# def profile_picture_upload():
+# 	form = ProfilePictureForm()
+# 	cid = str(session['clientcid'])
+# 	first_name = session['first_name']
+# 	#default_prof_pic = 'app/uploads/photos/static/user_info/prof_pic/default.jpg'
+# 	#user_prof_pic = cid+'_'+first_name+'_'+'.png'
+# 	if form.validate_on_submit():
+# 		# Checks if the prof_pic is set yet. if set, then dont need to delete the old picture on the server
+# 		if session['prof_pic'] != url_for('static', filename='user_info/prof_pic/default.jpg'):
+# 			#need to delete or move the old prof_pic if it was set! Prevents users from adding too many pictures
+# 			os.remove('static/user_info/prof_pic/'+cid+'_'+first_name+'.png')
+			#flash(u'Your account is successfully updated.', 'success')
+# 			flash("You already have a file on the server!")
+# 		filename = photos.save(form.prof_pic.data, name=cid+'_'+first_name+'.png')
+# 		file_url = photos.url(filename) 
+# 		session['prof_pic'] = file_url
+# 		c, conn = connection()
+# 		c.execute("UPDATE cpersonals SET prof_pic = %s WHERE cid = (%s)", (file_url, cid))
 
-		conn.commit()
-		c.close()
-		conn.close()
-	else:
-		file_url = None
+# 		conn.commit()
+# 		c.close()
+# 		conn.close()
+# 	else:
+# 		file_url = None
 
-	return render_template('profile_picture_upload.html', form=form, file_url=file_url)
+# 	return render_template('profile_picture_upload.html', form=form, file_url=file_url)
 
 # #### END PROFILE PIC UPLOAD ####
 

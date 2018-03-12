@@ -18,14 +18,14 @@
 			    <li>
 			    	{% from "_formhelpers.html" import render_field %}
 					<form class="uk-grid-small" action="/account/" method="post" uk-grid>
-						<div class="uk-width-1-1">
-							<img class="uk-border-rounded uk-box-shadow-small" src="{{ session.prof_pic  }}" width="200" height="200" alt="">
+						<!-- <div class="uk-width-1-1">
+							<img class="uk-border-rounded uk-box-shadow-small" src=" session.prof_pic  " width="200" height="200" alt="">
 						</div>
 						<div class="uk-width-1-1">
-							<a href="{{ url_for('profile_picture_upload') }}">
+							<a href="  url_for('profile_picture_upload')  ">
 								<button class="uk-button-small uk-button-default" type="button">Change picture</button>
 							</a>
-						</div>
+						</div> -->
 						<div class="uk-width-1-2@s">
 							{{ form.first_name.label }}
 							{{ form.first_name(value=session.first_name, class_="uk-input") }}
