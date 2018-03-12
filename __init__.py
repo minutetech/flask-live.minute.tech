@@ -638,7 +638,7 @@ def phone_reset():
 
 ALLOWED_EXTENSIONS = set(['png', 'jpg', 'jpeg', 'gif'])
 # /var/www/FlaskApp/FlaskApp/static/legal/MinutetechLLC_tos.pdf
-app.config['UPLOADED_PHOTOS_DEST'] = 'app/static/user_info/prof_pic'
+app.config['UPLOADED_PHOTOS_DEST'] = 'var/www/FlaskApp/FlaskApp/static/user_info/prof_pic'
 photos = UploadSet('photos', IMAGES)
 configure_uploads(app, photos)
 patch_request_class(app)  # set maximum file size, default is 16MB
