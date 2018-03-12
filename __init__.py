@@ -632,47 +632,47 @@ def phone_reset():
 	except Exception as e:
 		return(str(e))
 
-# #### PROFILE PIC UPLOAD ####
-# # Based after https://gist.github.com/greyli/81d7e5ae6c9baf7f6cdfbf64e8a7c037
-# # For uploading files
+#### PROFILE PIC UPLOAD ####
+# Based after https://gist.github.com/greyli/81d7e5ae6c9baf7f6cdfbf64e8a7c037
+# For uploading files
 
-# ALLOWED_EXTENSIONS = set(['png', 'jpg', 'jpeg', 'gif'])
-# # /var/www/FlaskApp/FlaskApp/static/legal/MinutetechLLC_tos.pdf
-# app.config['UPLOADED_PHOTOS_DEST'] = 'static/user_info/prof_pic'
-# photos = UploadSet('photos', IMAGES)
-# configure_uploads(app, photos)
-# patch_request_class(app)  # set maximum file size, default is 16MB
+ALLOWED_EXTENSIONS = set(['png', 'jpg', 'jpeg', 'gif'])
+# /var/www/FlaskApp/FlaskApp/static/legal/MinutetechLLC_tos.pdf
+app.config['UPLOADED_PHOTOS_DEST'] = 'app/static/user_info/prof_pic'
+photos = UploadSet('photos', IMAGES)
+configure_uploads(app, photos)
+patch_request_class(app)  # set maximum file size, default is 16MB
 
-# class ProfilePictureForm(FlaskForm):
-# 	prof_pic = FileField(validators=[FileAllowed(photos, u'Image only!')])
+class ProfilePictureForm(FlaskForm):
+	prof_pic = FileField(validators=[FileAllowed(photos, u'Image only!')])
 
-# @app.route('/profile_picture_upload/', methods=['GET','POST'])
-# def profile_picture_upload():
-# 	form = ProfilePictureForm()
-# 	cid = str(session['clientcid'])
-# 	first_name = session['first_name']
-# 	#default_prof_pic = 'app/uploads/photos/static/user_info/prof_pic/default.jpg'
-# 	#user_prof_pic = cid+'_'+first_name+'_'+'.png'
-# 	if form.validate_on_submit():
-# 		# Checks if the prof_pic is set yet. if set, then dont need to delete the old picture on the server
-# 		if session['prof_pic'] != url_for('static', filename='user_info/prof_pic/default.jpg'):
-# 			#need to delete or move the old prof_pic if it was set! Prevents users from adding too many pictures
-# 			os.remove('static/user_info/prof_pic/'+cid+'_'+first_name+'.png')
-			#flash(u'Your account is successfully updated.', 'success')
-# 			flash("You already have a file on the server!")
-# 		filename = photos.save(form.prof_pic.data, name=cid+'_'+first_name+'.png')
-# 		file_url = photos.url(filename) 
-# 		session['prof_pic'] = file_url
-# 		c, conn = connection()
-# 		c.execute("UPDATE cpersonals SET prof_pic = %s WHERE cid = (%s)", (file_url, cid))
+@app.route('/profile_picture_upload/', methods=['GET','POST'])
+def profile_picture_upload():
+	form = ProfilePictureForm()
+	cid = str(session['clientcid'])
+	first_name = session['first_name']
+	#default_prof_pic = 'app/uploads/photos/static/user_info/prof_pic/default.jpg'
+	#user_prof_pic = cid+'_'+first_name+'_'+'.png'
+	if form.validate_on_submit():
+		# Checks if the prof_pic is set yet. if set, then dont need to delete the old picture on the server
+		if session['prof_pic'] != url_for('static', filename='user_info/prof_pic/default.jpg'):
+			#need to delete or move the old prof_pic if it was set! Prevents users from adding too many pictures
+			os.remove('static/user_info/prof_pic/'+cid+'_'+first_name+'.png')
+			flash(u'Your account is successfully updated.', 'success')
+			flash("You already have a file on the server!")
+		filename = photos.save(form.prof_pic.data, name=cid+'_'+first_name+'.png')
+		file_url = photos.url(filename) 
+		session['prof_pic'] = file_url
+		c, conn = connection()
+		c.execute("UPDATE cpersonals SET prof_pic = %s WHERE cid = (%s)", (file_url, cid))
 
-# 		conn.commit()
-# 		c.close()
-# 		conn.close()
-# 	else:
-# 		file_url = None
+		conn.commit()
+		c.close()
+		conn.close()
+	else:
+		file_url = None
 
-# 	return render_template('profile_picture_upload.html', form=form, file_url=file_url)
+	return render_template('profile_picture_upload.html', form=form, file_url=file_url)
 
 # #### END PROFILE PIC UPLOAD ####
 
@@ -1159,7 +1159,46 @@ def tech_login():
 	except Exception as e:
 		error = e
 		return render_template("techlogin.html", error = error)
+
+@app.route('/forgot_password/<token>')
+def forgot_password(token):
+	try:
+		email = s.loads(token, salt='email-confirm', max_age=3600)
+		form = PasswordResetForm(request.form)
+		if request.method == "POST" and form.validate():
+			password = sha256_crypt.encrypt((str(form.password.data)))
+			c, conn = connection()
+			c.execute("UPDATE clients SET password = %s WHERE cid = (%s)", (thwart(password), cid))
+			conn.commit()
+			flash(u'Password successfully changed!', 'success')
+			c.close()
+			conn.close()
+			#make sure token cant be used twice
+			return redirect(url_for('account'))
+
+		return render_template("forgot_password.html", form=form)
+			
+	except SignatureExpired:
+		flash(u'The token has expired', 'danger')
+		return redirect(url_for('homepage'))
+
+@app.route('/fforgot_password/')
+def fforgot_password():
+	try:
+		# Send confirmation email
+		f_email = request.form['f_email']
+		token = s.dumps(email, salt='forgot-password')
+		msg = Message("Minute.tech - Forgot Password", sender = "admin@minute.tech", recipients=[f_email])
+		link = url_for('forgot_password', token=token, _external=True)
+		msg.body = render_template('forgot_password-email.txt', link=link, first_name=first_name)
+		msg.html = render_template('forgot_password-email.html', link=link, first_name=first_name)
+		mail.send(msg)
+		flash(u'Password reset link sent to email', 'success')
+		return redirect(url_for('homepage'))
 	
+	except Exception as e:
+		return(str(e))
+
 #CLIENT REGISTER
 class RegistrationForm(Form):
 	first_name = TextField('First Name', [validators.Length(min=1, max=50)])
@@ -1342,6 +1381,13 @@ def tech_register_page():
 				session['techbio'] = techbio
 				#change this when the server goes live to the proper folder
 				session['techprof_pic'] = default_prof_pic
+				# Send confirmation email
+				token = s.dumps(techemail, salt='email-confirm')
+				msg = Message("Minute.tech - Email Verification", sender = "admin@minute.tech", recipients=[techemail])
+				link = url_for('email_verify', token=token, _external=True)
+				msg.body = render_template('email_verify.txt', link=link, first_name=techfirst_name)
+				msg.html = render_template('email_verify.html', link=link, first_name=techfirst_name)
+				mail.send(msg)
 				return redirect(url_for('techaccount'))
 
 		return render_template("techregister.html", form=form)
