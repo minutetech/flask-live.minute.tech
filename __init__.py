@@ -1097,11 +1097,12 @@ def logout():
 	flash(u'You have been logged out!', 'danger')
 	return redirect(url_for('homepage'))
 
-	
+login_attempts = 0
 #CLIENT LOGIN
 @app.route('/login/', methods=['GET','POST'])
 def login():
 	error = ''
+	global login_attempts
 	try:
 		c, conn = connection()
 		if request.method == "POST":
@@ -1121,17 +1122,20 @@ def login():
 				return redirect(url_for("account"))
 			
 			else:
-				error = "Invalid credentials, try again."
+				login_attempts += 1
+				error = "Invalid credentials, try again. Attempt #{}".format(login_attempts)
 
 		return render_template("login.html", error = error)
 		
 	except Exception as e:
-		error = "Invalid credentials, try again."
+		error = "No records for the email provided."
 		return render_template("login.html", error = error)
 
+techlogin_attempts = 0
 #TECH LOGIN
 @app.route('/techlogin/', methods=['GET','POST'])
 def tech_login():
+	global techlogin_attempts
 	error = ''
 	try:
 		c, conn = connection()
@@ -1152,12 +1156,13 @@ def tech_login():
 				return redirect(url_for("techaccount"))
 			
 			else:
-				error = "Invalid credentials, try again."
+				techlogin_attempts += 1
+				error = "Invalid credentials, try again. Attempt #{}".format(techlogin_attempts)
 
 		return render_template("techlogin.html", error = error)
 		
 	except Exception as e:
-		error = e
+		error = "No records for the email provided."
 		return render_template("techlogin.html", error = error)
 
 @app.route('/forgot_password/<token>')
