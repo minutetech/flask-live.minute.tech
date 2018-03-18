@@ -6,7 +6,17 @@ Setup server using:
 -https://www.digitalocean.com/community/tutorials/how-to-install-linux-apache-mysql-php-lamp-stack-on-ubuntu-16-04
 -https://www.digitalocean.com/community/tutorials/how-to-deploy-a-flask-application-on-an-ubuntu-vps
 
-DEV-->ssh root@138.197.210.172
+DEV-->ssh root@159.65.109.206
+Ubuntu
+-User: root / Password: Greenalert11
+-User: douglasrcjames / Password: Red!kush#1
+-User: test / Password: welcomeback11
+MySQL
+-User: root / Password: Greenalert11
+-User douglasrcjames / Password: Red!kush#1
+-User: admin / Password: Printerugh!1
+-User: test / Password: welcomeback11
+
 
 LIVE-->ssh douglasrcjames@138.68.238.112
 Ubuntu
@@ -27,7 +37,7 @@ Running Ubuntu 17.10 and Python 2.7.14
 -->service apache2 restart
 
 SECRET KEY
-application.secret_key = 'quincyisthebestdog11'
+application.secret_key = 'anniebanana11'
 
 -Used this to setup virtual environment (https://www.twilio.com/docs/guides/how-to-set-up-your-python-and-flask-development-environment#start-a-new-project-with-virtualenv)
 -In order to play with virtual environment, you must navigate to that directory, such as 

@@ -33,7 +33,7 @@ from dbconnect import connection
 # ALLOWED_EXTENSIONS = set(['png','jpg','jpeg','gif'])
 app = Flask(__name__, static_folder='static')
 # Key cross-referenced from flaskapp.wsgi
-app.config['SECRET_KEY'] = 'quincyisthebestdog11'
+app.config['SECRET_KEY'] = 'anniebanana11'
 #For Flask Mail
 app.config.from_pyfile('config.cfg')
 mail = Mail(app)
