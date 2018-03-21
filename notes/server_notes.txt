@@ -6,11 +6,11 @@ Setup server using:
 -https://www.digitalocean.com/community/tutorials/how-to-install-linux-apache-mysql-php-lamp-stack-on-ubuntu-16-04
 -https://www.digitalocean.com/community/tutorials/how-to-deploy-a-flask-application-on-an-ubuntu-vps
 
-DEV-->ssh root@159.65.109.206
+DEV-->ssh root@159.89.155.96
 Ubuntu
 -User: root / Password: Greenalert11
 -User: douglasrcjames / Password: Red!kush#1
--User: test / Password: welcomeback11
+-User: test / Password: welcomeback11 #might not exist anymore
 MySQL
 -User: root / Password: Greenalert11
 -User douglasrcjames / Password: Red!kush#1
@@ -58,6 +58,7 @@ $ pip install Flask-WTF
 $ pip install passlib
 $ pip install flask_uploads
 $ pip install flask_mail
+$ pip install Flask-Mail==0.9.0 (from iyusuf)
 
 $ pip install mysqlclient 
 -THIS CAUSED A BIG ERROR on windows, probably has to do with Python Version 3.7 not supported
@@ -80,6 +81,7 @@ $ pip install -r requirements.txt
 
 -Then run app
 $ python __init__.py
+$ python run.py (after blueprint refactoring)
 -Then navigate to ( http://localhost:5000 ) to view!
 -Can use ngrok to view over internet!
 
