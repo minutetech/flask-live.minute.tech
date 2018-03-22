@@ -6,7 +6,7 @@ Setup server using:
 -https://www.digitalocean.com/community/tutorials/how-to-install-linux-apache-mysql-php-lamp-stack-on-ubuntu-16-04
 -https://www.digitalocean.com/community/tutorials/how-to-deploy-a-flask-application-on-an-ubuntu-vps
 
-DEV-->ssh root@159.89.155.96
+DEV-->ssh root@159.65.109.206
 Ubuntu
 -User: root / Password: Greenalert11
 -User: douglasrcjames / Password: Red!kush#1
@@ -218,3 +218,13 @@ $ cd ../-var/www/FlaskApp/FlaskApp/
 $ git pull origin master
 
 $ service apache2 restart
+
+
+------------------------------
+Yusuf restructured (dev) app to nginx/uwsgi/supervisor stack
+
+for nginx configuration --> /etc/nginx/site-available/default 
+
+Minutetech app --> /opt/apps
+
+uwsgi configuration you will find it inside of the new project path named config.ini
