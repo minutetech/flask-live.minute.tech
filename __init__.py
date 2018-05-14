@@ -109,7 +109,7 @@ def homepage():
 			conn.commit()
 			c.close()
 			conn.close()
-			flash(u'Your question has been added to the pool under the email on file.', 'success')
+			flash(u'Your question has been added to the system under the email on file.', 'success')
 			msg = Message("Minute.tech - Email Verification", sender = "admin@minute.tech", recipients=[email])
 			msg.body = render_template('question_recieved.txt')
 			msg.html = render_template('question_recieved.html')
@@ -1255,7 +1255,7 @@ def login():
 		return render_template("login.html", error = error)
 		
 	except Exception as e:
-		error = e
+		error = "No records for the email provided."
 		return render_template("login.html", error = error)
 
 techlogin_attempts = 0
@@ -1579,4 +1579,4 @@ def file_downloads():
 ############################################ END ACCOUNT SYSTEM #########################################################
 
 if __name__ == "__main__":
-	app.run(debug=True)
+	app.run(debug=False)
