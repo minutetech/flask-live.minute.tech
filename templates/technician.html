@@ -1,0 +1,57 @@
+{% extends "header_no_container.html" %}
+
+{% block body %}
+
+	<!-- SECTION 1 -->
+
+	<section class="uk-section uk-section-large uk-background-cover uk-background-fixed uk-background-top-center" 
+			style="background-image: url({{ url_for('static', filename='images/black-tie-technician.png')}});">
+		<div class="uk-container uk-text-center uk-margin-small">
+			<div class="uk-card uk-card-secondary uk-card-hover uk-card-body uk-light" uk-scrollspy="cls: uk-animation-scale-down; repeat: true"> 
+				<img alt="key hole" src="{{ url_for('static', filename='flat-icons/support.png')}}" style="max-width:175px;" >
+				<h1 class="uk-heading-primary"><span><b>Technician material?</b></span></h1>
+				<hr>
+				<p class="uk-text-large" style="color:white">
+				   Have some free time and plenty of tech IQ? Earn more than an Uber driver by answering tech questions as a Minute.technician from the comfort of your computer. We are now taking in our first set of technicians to begin answering client questions across the tech spectrum. <br>Questions may include: "How do I reset my router?" to "How do I turn of location services on iPhone X?". <br>Sign up below to see if you qualify!
+			</div>
+		</div>
+		<div class="uk-container uk-container-small uk-margin-small">
+			<div class="uk-card uk-card-secondary uk-card-hover uk-card-body uk-light" uk-scrollspy="cls: uk-animation-scale-down; repeat: true"> 
+				<br>
+			    <div data-uk-margin>
+			    	<h1 class="uk-heading-primary uk-text-center"><span><b>Why you?</b></span></h1>
+					<p class="uk-text-meta">Tell us why you would make a good addition to the Minute.technician team. Include some past experiences, skills, and motivations below.</p>
+					<form class="uk-grid-small" action="/technician/" method="post" uk-grid>
+						<div class="uk-width-1-2@s uk-margin-small">
+							{{ form.email.label }}
+							{% if session.logged_in == 'tech' %}
+								{{ form.email(value=session.techemail, class_="uk-input") }}
+							{% else %}
+								{{ form.email(placeholder="you@email.com", class_="uk-input") }}
+							{% endif %}
+							{% for error in form.email.errors %}
+				        		<span class="uk-label uk-label-danger">{{ error }}</span>
+				    		{% endfor %}
+						</div>
+						<div class="uk-width-1-1 uk-margin-small">
+							{{ form.body.label }}
+							{{ form.body(placeholder="i.e. - I have always loved technology and showing my family how to use their devices to improve their daily life. I am currently studying computer engineering at university and am looking for a job to work remotely from my computer in my free time. Feel free to check out my LinkedIn account: https://www.linkedin.com/in/douglasrcjames/", class_="uk-textarea", rows="20", cols="100") }}
+							{% for error in form.body.errors %}
+				        		<span class="uk-label uk-label-danger">{{ error }}</span>
+				    		{% endfor %}
+						</div>
+						<div class="uk-width-1-1">
+							{{ form.recaptcha }}
+						</div>
+						
+						<div class="uk-width-1-4@s uk-margin-small">
+							<input class="uk-button uk-button-primary" type="submit" value="Submit">
+						</div>
+					</form>
+				</div>
+			</div>
+		</div>
+	</section>
+	<!--/HERO-->
+
+{% endblock %}

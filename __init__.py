@@ -69,37 +69,164 @@ def test():
 
 ############################ PAGES #################################
 class AskForm(Form):
+	email = TextField('Email Address', [validators.Length(min=6, max=50)])
 	body = TextAreaField('Desciption', [validators.Length(min=10, max=2000)])
+	recaptcha = RecaptchaField()
+
+# TODO:
+# Add errors if duplicate email
+# Send confirmation email with generated password
+# Allow referral links(email)
+
 
 @app.route('/', methods=['GET','POST'])
 def homepage():
 	#if user posts a question to the pool
 	form = AskForm(request.form)
 	if request.method == "POST" and form.validate():
-		difficulty =  0
-		title = 'Not provided'
-		body = form.body.data
-		tags = 'Not provided'
-		priority = 500
-		clientcid = session['clientcid']
-
 		c, conn = connection()
-		c.execute("INSERT INTO tickets (cid, difficulty, priority, title, tags) VALUES (%s, %s, %s, %s, %s)", (clientcid, difficulty, priority, title, tags))
-		conn.commit()
-		# Get qid after the ticket is generated after an initial "ask" page request
-		c.execute("SELECT qid FROM tickets WHERE cid = (%s) AND title = (%s)", (clientcid, title))
-		qid = c.fetchone()[0]
-		conn.commit()
-		c.execute("INSERT INTO threads (qid, cid, body) VALUES (%s, %s, %s)", (qid, clientcid, body))
-		conn.commit()
-		c.close()
-		conn.close()
-		flash(u'Submission successful. We have added your question to the pool!', 'success')
-		return redirect(url_for('homepage'))
+		email = form.email.data
+		body = form.body.data
+		title = 'Not provided'
+		tags = 'Not provided'
+		difficulty =  0
+		priority = 0
+		
+		#check if already exists
+		x = c.execute("SELECT * FROM clients WHERE email = (%s)", (thwart(email),))
+		if int(x) > 0:
+			c.execute("SELECT cid FROM clients WHERE email = (%s)", (email,))
+			cid = c.fetchone()[0]
+			conn.commit()
+
+			c.execute("INSERT INTO tickets (cid, difficulty, priority, title, tags) VALUES (%s, %s, %s, %s, %s)", (cid, difficulty, priority, title, tags))
+			conn.commit()
+			# Get qid after the ticket is generated after an initial "ask" page request
+			c.execute("SELECT qid FROM tickets WHERE cid = (%s) AND title = (%s)", (cid, title))
+			qid = c.fetchone()[0]
+			conn.commit()
+			c.execute("INSERT INTO threads (qid, cid, body) VALUES (%s, %s, %s)", (qid, cid, body))
+			conn.commit()
+			c.close()
+			conn.close()
+			flash(u'Your question has been added to the pool under the email on file.', 'success')
+			msg = Message("Minute.tech - Email Verification", sender = "admin@minute.tech", recipients=[email])
+			msg.body = render_template('question_recieved.txt')
+			msg.html = render_template('question_recieved.html')
+			mail.send(msg)
+			return redirect(url_for('homepage'))
+		else:
+			import random, string
+			N = 20 #number of chars in random password
+			password = ''.join(random.choice(string.ascii_uppercase + string.digits) for _ in range(N))
+			hashed_password = sha256_crypt.encrypt((str(password)))
+			
+			first_name = "User"
+			last_name = "Not provided"
+			phone = "Not provided"
+			address = "Not provided"
+			city = "Not provided"
+			state = "NA"
+			czip = "00000"
+			bio = "Not provided"
+			default_prof_pic = url_for('static', filename='user_info/prof_pic/default.jpg')
+			c.execute("INSERT INTO clients (email, phone, password) VALUES (%s, %s, %s)", (thwart(email), phone, hashed_password))
+			c.execute("INSERT INTO cpersonals (first_name, last_name, address, city, state, zip, bio, prof_pic) VALUES (%s, %s, %s, %s, %s, %s, %s, %s)", (first_name, last_name, address, city, state, czip, bio, default_prof_pic))
+			conn.commit()
+			c.execute("SELECT cid FROM clients WHERE email = (%s)", (email,))
+			cid = c.fetchone()[0]
+			conn.commit()
+
+			c.execute("INSERT INTO tickets (cid, difficulty, priority, title, tags) VALUES (%s, %s, %s, %s, %s)", (cid, difficulty, priority, title, tags))
+			conn.commit()
+			# Get qid after the ticket is generated after an initial "ask" page request
+			c.execute("SELECT qid FROM tickets WHERE cid = (%s) AND title = (%s)", (cid, title))
+			qid = c.fetchone()[0]
+			conn.commit()
+			c.execute("INSERT INTO threads (qid, cid, body) VALUES (%s, %s, %s)", (qid, cid, body))
+			conn.commit()
+			c.close()
+			conn.close()
+			token = s.dumps(email, salt='email-confirm')
+			msg = Message("Minute.tech - Email Verification", sender = "admin@minute.tech", recipients=[email])
+			link = url_for('email_verify', token=token, _external=True)
+			msg.body = render_template('email_verify_with_password.txt', link=link, password=password, first_name=first_name)
+			msg.html = render_template('email_verify_with_password.html', link=link, password=password, first_name=first_name)
+			mail.send(msg)
+			flash(u'Your question has been added to the pool and you were sent an email for account confirmation.', 'success')
+			return redirect(url_for('homepage'))
 
 	else:
 		error = "We couldn't post your question, please make sure you filled out all the fields properly and try again!"
 		return render_template("main.html", form=form)
+
+class TechnicianForm(Form):
+	email = TextField('Email Address', [validators.Length(min=6, max=50)])
+	body = TextAreaField('Tell us about yourself', [validators.Length(min=10, max=2000)])
+	recaptcha = RecaptchaField()
+
+@app.route('/technician/', methods=['GET','POST'])
+def technician():
+	#if user posts a question to the pool
+	form = TechnicianForm(request.form)
+	if request.method == "POST" and form.validate():
+		email = form.email.data
+		body = form.body.data
+		body = "Technician response: " + body
+		c, conn = connection()
+
+		x = c.execute("SELECT * FROM technicians WHERE email = (%s)", (thwart(email),))
+		if int(x) > 0:
+			c.execute("SELECT tid FROM technicians WHERE email = (%s)", (email,))
+			tid = c.fetchone()[0]
+			conn.commit()
+			c.execute("INSERT INTO contact (message, email, uid) VALUES (%s, %s, %s)", (body, email, tid))
+			conn.commit()
+			c.close()
+			conn.close()
+			flash(u'Your response has been recieved and we will get back to you soon.', 'success')
+			msg = Message("Minute.tech - Response recieved", sender = "admin@minute.tech", recipients=[email])
+			msg.body = render_template('techresponse.txt')
+			msg.html = render_template('techresponse.html')
+			mail.send(msg)
+			return redirect(url_for('technician'))
+		else:
+			import random, string
+			N = 20 #number of chars in random password
+			password = ''.join(random.choice(string.ascii_uppercase + string.digits) for _ in range(N))
+			hashed_password = sha256_crypt.encrypt((str(password)))
+			first_name = "Technician"
+			last_name = "Not provided"
+			phone = "Not provided"
+			address = "Not provided"
+			city = "Not provided"
+			state = "NA"
+			tzip = "00000"
+			bio = "Not provided"
+			default_prof_pic = url_for('static', filename='user_info/prof_pic/default.jpg')
+			
+			c.execute("INSERT INTO technicians (email, phone, password) VALUES (%s, %s, %s)", (thwart(email), phone, hashed_password))
+			c.execute("INSERT INTO tpersonals (first_name, last_name, address, city, state, zip, bio, prof_pic) VALUES (%s, %s, %s, %s, %s, %s, %s, %s)", (first_name, last_name, address, city, state, tzip, bio, default_prof_pic))
+			conn.commit()
+			c.execute("SELECT tid FROM technicians WHERE email = (%s)", (email,))
+			tid = c.fetchone()[0]
+			conn.commit()
+			c.execute("INSERT INTO contact (message, email, uid) VALUES (%s, %s, %s)", (body, email, tid))
+			conn.commit()
+			c.close()
+			conn.close()
+			flash(u'Your response was recieved and an account verification email was sent.', 'success')
+			token = s.dumps(email, salt='email-confirm')
+			msg = Message("Minute.tech - Email Verification", sender = "admin@minute.tech", recipients=[email])
+			link = url_for('email_verify', token=token, _external=True)
+			msg.body = render_template('techemail_verify_with_password.txt', link=link, password=password, first_name=first_name)
+			msg.html = render_template('techemail_verify_with_password.html', link=link, password=password, first_name=first_name)
+			mail.send(msg)
+			return redirect(url_for('technician'))
+
+	else:
+		error = "We couldn't post your response, please make sure you filled out all the fields properly and try again!"
+		return render_template("technician.html", form=form)
 
 class ContactForm(Form):
 	message = TextAreaField('Message', [validators.Length(min=10, max=2000)])
@@ -1128,7 +1255,7 @@ def login():
 		return render_template("login.html", error = error)
 		
 	except Exception as e:
-		error = "No records for the email provided."
+		error = e
 		return render_template("login.html", error = error)
 
 techlogin_attempts = 0
@@ -1310,7 +1437,7 @@ def email_verify(token):
 				return redirect(url_for('techaccount'))
 			
 		else:
-			flash(u'Log in first, then click the link again', 'danger')
+			flash(u'Log in first, then click the verification link from your email again.', 'danger')
 			return redirect(url_for('login'))
 
 		render_template("main.html")
@@ -1390,8 +1517,8 @@ def tech_register_page():
 				token = s.dumps(techemail, salt='email-confirm')
 				msg = Message("Minute.tech - Email Verification", sender = "admin@minute.tech", recipients=[techemail])
 				link = url_for('email_verify', token=token, _external=True)
-				msg.body = render_template('email_verify.txt', link=link, first_name=techfirst_name)
-				msg.html = render_template('email_verify.html', link=link, first_name=techfirst_name)
+				msg.body = render_template('techemail_verify.txt', link=link, first_name=techfirst_name)
+				msg.html = render_template('techemail_verify.html', link=link, first_name=techfirst_name)
 				mail.send(msg)
 				return redirect(url_for('techaccount'))
 
@@ -1423,6 +1550,19 @@ def return_logo_long():
 @app.route('/Minutetech_rocket_ship/')
 def return_tocket_ship():
 	return send_file('static/flat-icons/008-startup.png')
+
+@app.route('/Minute_technician/')
+def return_technician():
+    return send_file('static/flat-icons/support.png')
+
+@app.route('/Minutetech_shield/')
+def return_shield():
+    return send_file('static/flat-icons/005-shield.png')
+
+@app.route('/technician-macbook-watch/')
+def return_pic2():
+    return send_file('static/images/technician-macbook-watch.png',
+                     attachment_filename='technician-macbook-watch.png')
 
 # # Univers Black
 # @app.route('/Minutetech_font_black/')

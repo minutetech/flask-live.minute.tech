@@ -1,0 +1,5 @@
+Welcome to Minute.tech!
+
+We succesfully registered your technician account! In order to start taking in clients on the Minute.tech system, you must pass certification, proving to the Minute.tech hiring board that you possses superb customer service, technical skills, and sanity. We thank you for your interest and early adoption in the Minute.tech system, we will get back to you as soon as possible with the next steps.
+
+Please verify your account with this link: {{ link }}
