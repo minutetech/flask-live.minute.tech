@@ -30,14 +30,14 @@
 								{{ form.email(placeholder="you@email.com", class_="uk-input") }}
 							{% endif %}
 							{% for error in form.email.errors %}
-				        		<span class="uk-label uk-label-danger uk-dark">{{ error }}</span>
+				        		<div class="uk-label uk-label-danger">{{ error }}</span>
 				    		{% endfor %}
 						</div>
 						<div class="uk-width-1-1 uk-margin-small">
 							{{ form.body.label }}
 							{{ form.body(placeholder="i.e. - I have always loved technology and showing my family how to use their devices to improve their daily life. I am currently studying computer engineering at university and am looking for a job to work remotely from my computer in my free time. Feel free to check out my LinkedIn account: https://www.linkedin.com/in/douglasrcjames/", class_="uk-textarea", rows="20", cols="100") }}
 							{% for error in form.body.errors %}
-				        		<span class="uk-label uk-label-danger">{{ error }}</span>
+				        		<div class="uk-label uk-label-danger">{{ error }}</span>
 				    		{% endfor %}
 						</div>
 						<div class="uk-width-1-1">
