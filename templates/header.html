@@ -103,8 +103,8 @@
 					{% if session.logged_in == 'client' %}
 						<!-- CLIENT NAVBAR -->
 						<div class="uk-navbar-dropdown uk-padding-small" uk-drop="mode: click; cls-drop: uk-navbar-dropdown; boundary: !nav; flip: x">
-							<a href="/"><span class="uk-icon uk-margin-small-right" uk-icon="icon: user"></span> Client </a></li>
-							<a href="/technician/"><span class="uk-icon uk-margin-small-right" uk-icon="icon: nut"></span> Technician </a></li>
+							<a href="/"><span class="uk-icon uk-margin-small-right" uk-icon="icon: user"></span> Client </a><br>
+							<a href="/technician/"><span class="uk-icon uk-margin-small-right" uk-icon="icon: nut"></span> Technician </a><br>
 							<a href="/account/"> <span class="uk-icon uk-margin-small-right" uk-icon="icon: user"></span> Account </a><br>
 							<a href="/about/"><span class="uk-icon uk-margin-small-right" uk-icon="icon: info"></span> About </a><br>
 							<a href="/logout/"> <span class="uk-icon uk-margin-small-right" uk-icon="icon: sign-out"></span> Logout </a>
@@ -112,8 +112,8 @@
 					{% elif session.logged_in == 'tech' %}
 						<!-- TECH NAVBAR -->
 						<div class="uk-navbar-dropdown" uk-drop="mode: click; cls-drop: uk-navbar-dropdown; boundary: !nav; flip: x">
-							<a href="/"><span class="uk-icon uk-margin-small-right" uk-icon="icon: user"></span> Client </a></li>
-							<a href="/technician/"><span class="uk-icon uk-margin-small-right" uk-icon="icon: nut"></span> Technician </a></li>
+							<a href="/"><span class="uk-icon uk-margin-small-right" uk-icon="icon: user"></span> Client </a><br>
+							<a href="/technician/"><span class="uk-icon uk-margin-small-right" uk-icon="icon: nut"></span> Technician </a><br>
 							<a href="/techaccount/"> <span class="uk-icon uk-margin-small-right" uk-icon="icon: user"></span> Account </a><br>
 							<a href="/about/"><span class="uk-icon uk-margin-small-right" uk-icon="icon: info"></span> About </a><br>
 							<a href="/logout/"> <span class="uk-icon uk-margin-small-right" uk-icon="icon: sign-out"></span> Logout </a>
@@ -121,8 +121,8 @@
 					{% else %}
 						<!-- NO USER NAVBAR -->
 						<div class="uk-navbar-dropdown" uk-drop="mode: click; cls-drop: uk-navbar-dropdown; boundary: !nav; flip: x">
-							<a href="/"><span class="uk-icon uk-margin-small-right" uk-icon="icon: user"></span> Client </a></li>
-							<a href="/technician/"><span class="uk-icon uk-margin-small-right" uk-icon="icon: nut"></span> Technician </a></li>
+							<a href="/"><span class="uk-icon uk-margin-small-right" uk-icon="icon: user"></span> Client </a><br>
+							<a href="/technician/"><span class="uk-icon uk-margin-small-right" uk-icon="icon: nut"></span> Technician </a><br>
 							<a href="/about/"><span class="uk-icon uk-margin-small-right" uk-icon="icon: info"></span> About </a><br>
 							<a href="/login/"> <span class="uk-icon uk-margin-small-right" uk-icon="icon: sign-in"></span> Login </a><br>
 							<a href="/register/"> <span class="uk-icon uk-margin-small-right" uk-icon="icon: pencil"></span> Sign up </a>
