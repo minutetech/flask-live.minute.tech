@@ -47,16 +47,57 @@
 
 		<h2><span uk-icon="icon: user; ratio: 2.5"></span> Account Registration</h2>
 		<hr>
-		{% from "_formhelpers.html" import render_field %}
 			<form class="uk-grid-small uk-background-muted uk-padding" method=post action="/register/" uk-grid>
 				<h4>All information provided below will be kept secure and private.</h4>
-				<div class="uk-width-1-2@s">{{ render_field(form.first_name,placeholder="First Name", class_="uk-input") }}</div>
-				<div class="uk-width-1-2@s">{{ render_field(form.last_name,placeholder="Last Name", class_="uk-input") }}</div>
-				<div class="uk-width-1-2@s">{{ render_field(form.email,placeholder="Email", class_="uk-input") }}</div>
-				<div class="uk-width-1-4@s">{{ render_field(form.phone,placeholder="Phone", class_="uk-input") }}</div>
-				<div class="uk-width-1-4@s">{{ render_field(form.czip,placeholder="ZIP", class_="uk-input") }}</div>
-				<div class="uk-width-1-2@s">{{ render_field(form.password,placeholder="Password", class_="uk-input") }}</div>
-				<div class="uk-width-1-2@s">{{ render_field(form.confirm,placeholder="Repeat Password", class_="uk-input") }}</div><br>
+				<div class="uk-width-1-2@s">
+					{{ form.first_name.label }}
+					{{ form.first_name(placeholder="John", class_="uk-input") }}
+					{% for error in form.first_name.errors %}
+				        <span class="uk-label uk-label-danger">{{ error }}</span>
+				    {% endfor %}
+				</div>
+				<div class="uk-width-1-2@s">
+					{{ form.last_name.label }}
+					{{ form.last_name(placeholder="Doe", class_="uk-input") }}
+					{% for error in form.last_name.errors %}
+					    <span class="uk-label uk-label-danger">{{ error }}</span>
+					{% endfor %}
+				</div>
+				<div class="uk-width-1-2@s">
+					{{ form.email.label }}
+					{{ form.email(placeholder="you@mail.com", class_="uk-input") }}
+					{% for error in form.email.errors %}
+				        <span class="uk-label uk-label-danger">{{ error }}</span>
+				    {% endfor %}
+				</div>
+				<div class="uk-width-1-4@s">
+					{{ form.phone.label }}
+					{{ form.phone(placeholder="1234567890", class_="uk-input") }}
+					{% for error in form.phone.errors %}
+					    <span class="uk-label uk-label-danger">{{ error }}</span>
+					{% endfor %}
+				</div>
+				<div class="uk-width-1-4@s">
+					{{ form.czip.label }}
+					{{ form.czip(placeholder="12345", class_="uk-input") }}
+					{% for error in form.czip.errors %}
+					    <span class="uk-label uk-label-danger">{{ error }}</span>
+					{% endfor %}
+				</div>
+				<div class="uk-width-1-2@s">
+					{{ form.password.label }}
+					{{ form.password(placeholder="", class_="uk-input") }}
+					{% for error in form.password.errors %}
+					    <span class="uk-label uk-label-danger">{{ error }}</span>
+					{% endfor %}
+				</div>
+				<div class="uk-width-1-2@s">
+					{{ form.confirm.label }}
+					{{ form.confirm(placeholder="", class_="uk-input") }}
+					{% for error in form.confirm.errors %}
+					    <span class="uk-label uk-label-danger">{{ error }}</span>
+					{% endfor %}
+				</div>
 			<div class="uk-width-1-1">
 				<p>By clicking "Register" below, I agree to the <a target="_blank" href="/MinutetechLLC_tos/">Minute.tech Terms.</a>
 				<a href="/MinutetechLLC_tos/" uk-icon="icon: link" target="_blank"></a></p>

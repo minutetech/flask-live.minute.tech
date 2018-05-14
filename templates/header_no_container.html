@@ -142,7 +142,7 @@
 <body>
 
 	<!-- Flashed messages section -->
-	<div class="uk-container-small uk-width-1-4@s uk-position-top-center uk-position-medium uk-position-z-index">
+	<div class="uk-container-small uk-width-1-4@s uk-position-top-center uk-position-relative uk-position-z-index">
 		{% with messages = get_flashed_messages(with_categories=true) %}
 			{% if messages %}
 				<ul class=flashes>

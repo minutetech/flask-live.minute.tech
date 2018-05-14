@@ -156,9 +156,10 @@ def homepage():
 			flash(u'Your question has been added to the pool and you were sent an email for account confirmation.', 'success')
 			return redirect(url_for('homepage'))
 
-	else:
-		error = "We couldn't post your question, please make sure you filled out all the fields properly and try again!"
-		return render_template("main.html", form=form)
+	elif request.method == "POST" and form.validate() == False:
+		flash(u"We couldn't process your response, please make sure you filled out all the fields properly, or try reloading the page.",'danger')
+
+	return render_template("main.html", form=form)
 
 class TechnicianForm(Form):
 	email = TextField('Email Address', [validators.Length(min=6, max=50)])
@@ -224,9 +225,10 @@ def technician():
 			mail.send(msg)
 			return redirect(url_for('technician'))
 
-	else:
-		error = "We couldn't post your response, please make sure you filled out all the fields properly and try again!"
-		return render_template("technician.html", form=form)
+	elif request.method == "POST" and form.validate() == False:
+		flash(u"We couldn't process your response, please make sure you filled out all the fields properly, or try reloading the page.",'danger')
+
+	return render_template("technician.html", form=form)
 
 class ContactForm(Form):
 	message = TextAreaField('Message', [validators.Length(min=10, max=2000)])
@@ -258,9 +260,10 @@ def about():
 			flash(u'Submission successful. We will get back to you as soon as possible!', 'success')
 			return redirect(url_for('about'))
 
-		else:
-			error = "We couldn't post your comment, please make sure you filled out all the fields properly, or try reloading the page and asking again."
-			return render_template("about.html", form=form)
+		elif request.method == "POST" and form.validate() == False:
+			flash(u"We couldn't process your response, please make sure you filled out all the fields properly, or try reloading the page.",'danger')
+
+		return render_template("about.html", form=form)
 
 	except Exception as e:
 		return render_template("500.html", error = e)
@@ -545,9 +548,9 @@ def account():
 
 				flash(u'Your account is successfully updated.', 'success')
 				return redirect(url_for('account'))
-		else:
-			#this probably isnt necessary since 500 error catches it as no seesion variable called 'logged_in'
-			flash(u'Try logging in as a client', 'secondary')
+
+		elif request.method == "POST" and form.validate() == False:
+			flash(u"We couldn't process your response, please make sure you filled out all the fields properly, or try reloading the page.",'danger')
 
 		return render_template("account.html", form=form, error = error)
 
@@ -606,7 +609,8 @@ def password_reset():
 				#so they cant get back in!
 				session['pconfirm'] = 0
 				return redirect(url_for('account'))
-
+			elif request.method == "POST" and form.validate() == False:
+				flash(u"We couldn't process your response, please make sure you filled out all the fields properly, or try reloading the page.",'danger')
 			return render_template("password_reset.html", form=form)
 		else:
 			flash(u'Not allowed there!', 'danger')
@@ -923,9 +927,8 @@ def techaccount():
 				flash(u'Your account is successfully updated.', 'success')
 				return redirect(url_for('techaccount'))
 
-		else:
-			flash(u'Try logging out and back in again!', 'secondary')
-			return redirect(url_for('homepage'))
+		elif request.method == "POST" and form.validate() == False:
+			flash(u"We couldn't process your response, please make sure you filled out all the fields properly, or try reloading the page.",'danger')
 
 		return render_template("techaccount.html", form=form, error = error)
 
@@ -1009,7 +1012,8 @@ def techpassword_reset():
 				#so they cant get back in!
 				session['tpconfirm'] = 0
 				return redirect(url_for('techaccount'))
-
+			elif request.method == "POST" and form.validate() == False:
+				flash(u"We couldn't process your response, please make sure you filled out all the fields properly, or try reloading the page.",'danger')
 			return render_template("techpassword_reset.html", form=form)
 		else:
 			flash(u'Not allowed there!', 'danger')
@@ -1405,7 +1409,8 @@ def register_page():
 				msg.html = render_template('email_verify.html', link=link, first_name=first_name)
 				mail.send(msg)
 				return redirect(url_for('account'))
-
+		elif request.method == "POST" and form.validate() == False:
+			flash(u"We couldn't process your response, please make sure you filled out all the fields properly, or try reloading the page.",'danger')
 		return render_template("register.html", form=form)
 
 
@@ -1521,7 +1526,8 @@ def tech_register_page():
 				msg.html = render_template('techemail_verify.html', link=link, first_name=techfirst_name)
 				mail.send(msg)
 				return redirect(url_for('techaccount'))
-
+		elif request.method == "POST" and form.validate() == False:
+			flash(u"We couldn't process your response, please make sure you filled out all the fields properly, or try reloading the page.",'danger')
 		return render_template("techregister.html", form=form)
 
 
@@ -1579,4 +1585,4 @@ def file_downloads():
 ############################################ END ACCOUNT SYSTEM #########################################################
 
 if __name__ == "__main__":
-	app.run(debug=False)
+	app.run(debug=True)

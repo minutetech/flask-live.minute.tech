@@ -16,7 +16,7 @@
 			</div>
 		</div>
 		<div class="uk-container uk-container-small uk-margin-small">
-			<div class="uk-card uk-card-secondary uk-card-hover uk-card-body uk-light" uk-scrollspy="cls: uk-animation-scale-down; repeat: true"> 
+			<div class="uk-card uk-card-secondary uk-card-hover uk-card-body" uk-scrollspy="cls: uk-animation-scale-down; repeat: true"> 
 				<br>
 			    <div data-uk-margin>
 			    	<h1 class="uk-heading-primary uk-text-center"><span><b>Why you?</b></span></h1>
@@ -30,7 +30,7 @@
 								{{ form.email(placeholder="you@email.com", class_="uk-input") }}
 							{% endif %}
 							{% for error in form.email.errors %}
-				        		<span class="uk-label uk-label-danger">{{ error }}</span>
+				        		<span class="uk-label uk-label-danger uk-dark">{{ error }}</span>
 				    		{% endfor %}
 						</div>
 						<div class="uk-width-1-1 uk-margin-small">
