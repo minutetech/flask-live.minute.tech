@@ -70,7 +70,7 @@ def test():
 ############################ PAGES #################################
 class AskForm(Form):
 	email = TextField('Email Address', [validators.Length(min=6, max=50)])
-	body = TextAreaField('Desciption', [validators.Length(min=10, max=2000)])
+	body = TextAreaField('Description', [validators.Length(min=10, max=2000)])
 	recaptcha = RecaptchaField()
 
 # TODO:

@@ -12,7 +12,7 @@
 				<h1 class="uk-heading-primary"><span><b>Technician material?</b></span></h1>
 				<hr>
 				<p class="uk-text-large" style="color:white">
-				   Have some free time and plenty of tech IQ? Earn more than an Uber driver by answering tech questions as a Minute.technician from the comfort of your computer. We are now taking in our first set of technicians to begin answering client questions across the tech spectrum. <br>Questions may include: "How do I reset my router?" to "How do I turn of location services on iPhone X?". <br>Sign up below to see if you qualify!
+				   Have some free time and plenty of tech IQ? Earn more than an Uber driver by answering tech questions as a Minute.technician from the comfort of your computer. We are now taking in our first set of technicians to begin answering client questions across the tech spectrum. <br>Questions may include: "How do I reset my router?" to "How do I turn off location services on iPhone X?". <br>Sign up below to see if you qualify!
 			</div>
 		</div>
 		<div class="uk-container uk-container-small uk-margin-small">
@@ -30,14 +30,14 @@
 								{{ form.email(placeholder="you@email.com", class_="uk-input") }}
 							{% endif %}
 							{% for error in form.email.errors %}
-				        		<div class="uk-label uk-label-danger">{{ error }}</div>
+				        		<span class="uk-label uk-label-danger">{{ error }}</span>
 				    		{% endfor %}
 						</div>
 						<div class="uk-width-1-1 uk-margin-small">
 							{{ form.body.label }}
 							{{ form.body(placeholder="i.e. - I have always loved technology and showing my family how to use their devices to improve their daily life. I am currently studying computer engineering at university and am looking for a job to work remotely from my computer in my free time. Feel free to check out my LinkedIn account: https://www.linkedin.com/in/douglasrcjames/", class_="uk-textarea", rows="20", cols="100") }}
 							{% for error in form.body.errors %}
-				        		<div class="uk-label uk-label-danger">{{ error }}</div>
+				        		<span class="uk-label uk-label-danger">{{ error }}</span>
 				    		{% endfor %}
 						</div>
 						<div class="uk-width-1-1">
