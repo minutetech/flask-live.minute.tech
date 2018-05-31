@@ -6,62 +6,62 @@
 
 	<section class="uk-section uk-section-large uk-background-cover uk-background-fixed uk-background-bottom-center" style="background-image: url({{ url_for('static', filename='images/desk-clutter-with-phone_color_blur.png')}});">
 		<div class="uk-container">
-				<div class="uk-container uk-background-muted uk-padding-large uk-padding-remove-top uk-padding-remove-bottom uk-align-center">
-					<div class="uk-padding uk-margin-auto" >
-						<div class="uk-text-center">
-							<img alt="augmented-reality" src="{{ url_for('static', filename='flat-icons/011-computer-2.png')}}" style="max-width:175px;" uk-scrollspy="cls: uk-animation-fade; repeat: true">
-							<h1 class="uk-heading-primary"><span><b>Everyone needs tech support, sometimes.</b></span></h1>
-							<hr>
+			<div class="uk-container uk-container-small uk-background-muted uk-align-center">
+				<div class="uk-padding uk-margin-auto" >
+					<div class="uk-text-center">
+						<img alt="augmented-reality" src="{{ url_for('static', filename='flat-icons/011-computer-2.png')}}" style="max-width:175px;" uk-scrollspy="cls: uk-animation-fade; repeat: true">
+						<h1 class="uk-heading-primary"><span><b>Everyone needs tech support, sometimes.</b></span></h1>
+						<hr>
 
-							{% if session.logged_in != 'tech' %}
+						{% if session.logged_in != 'tech' %}
 
-							<p class="uk-text-large">
-								Minute.tech is an on-demand, high quality technical support line for the average tech user at home.<br>  We can assist on issues all over the tech spectrum from online accounts, computers, smart phones, software and more. Currently we are going through testing, and taking potential clients. 
-								<br><b>Ask something below</b> to get started!
-							</p>
-						</div>
-					</div>
-				</div>
-					<div class="uk-container-small uk-background-muted uk-padding-large uk-align-center">
-						<h1 class="uk-heading-primary uk-text-center"><span><b>Ask us anything.</b></span></h1>
-						<p class="uk-text-meta">We are taking some of our first questions into the system to prepare the Minute.tech system. We will try our best to answer your questions as technicians join the Minute.tech team in the coming days!</p>
-						<form class="uk-grid-small" action="/" method="post" uk-grid>
-							<div class="uk-width-1-2@s uk-margin-small">
-								{{ form.email.label }}
-								{% if session.logged_in == 'client' %}
-									{{ form.email(value=session.email, class_="uk-input") }}
-								{% else %}
-									{{ form.email(placeholder="you@email.com", class_="uk-input") }}
-								{% endif %}
-								{% for error in form.email.errors %}
-					        		<span class="uk-label uk-label-danger">{{ error }}</span>
-					    		{% endfor %}
-							</div>
-							<div class="uk-width-1-1 uk-margin-small">
-								{{ form.body.label }}
-								{{ form.body(placeholder="i.e. - My device probably has a virus. I clicked the wrong link, and I have like a million popups a minute now. Minute.tech HELP! I need some direction here guys.", class_="uk-textarea", rows="20", cols="100") }}
-								{% for error in form.body.errors %}
-					        		<span class="uk-label uk-label-danger">{{ error }}</span>
-					    		{% endfor %}
-							</div>
-							
-					    	<div class="uk-width-1-1">
-								{{ form.recaptcha }}
-							</div>
-							<div class="uk-width-1-4@s uk-margin-small">
-								<input class="uk-button uk-button-primary" type="submit" value="Ask">
-							</div>
-						</form>
-					</div>
-						{% else %}
 						<p class="uk-text-large">
-							Minute.tech is an on-demand, high quality technical support line for the average tech user at home.<br>  We can assist on issues all over the tech spectrum from online accounts, computers, smart phones, software and more. Currently we are going through testing, and taking potential clients.
+							Minute.tech is an on-demand, high quality technical support line for the average tech user at home.<br>  We can assist on issues all over the tech spectrum from online accounts, computers, smart phones, software and more. Currently we are going through testing, and taking potential clients. 
+							<br><b>Ask something below</b> to get started!
 						</p>
-						</div>
 					</div>
 				</div>
-				{% endif %}
-				</div>
+			</div>
+			<div class="uk-container-small uk-background-muted uk-padding uk-align-center">
+				<h1 class="uk-heading-primary uk-text-center"><span><b>Ask us anything.</b></span></h1>
+				<p class="uk-text-meta">We are taking some of our first questions into the system to prepare the Minute.tech system. We will try our best to answer your questions as technicians join the Minute.tech team in the coming days!</p>
+				<form class="uk-grid-small" action="/" method="post" uk-grid>
+					<div class="uk-width-1-2@s uk-margin-small">
+						{{ form.email.label }}
+						{% if session.logged_in == 'client' %}
+							{{ form.email(value=session.email, class_="uk-input") }}
+						{% else %}
+							{{ form.email(placeholder="you@email.com", class_="uk-input") }}
+						{% endif %}
+						{% for error in form.email.errors %}
+			        		<span class="uk-label uk-label-danger">{{ error }}</span>
+			    		{% endfor %}
+					</div>
+					<div class="uk-width-1-1 uk-margin-small">
+						{{ form.body.label }}
+						{{ form.body(placeholder="i.e. - My device probably has a virus. I clicked the wrong link, and I have like a million popups a minute now. Minute.tech HELP! I need some direction here guys.", class_="uk-textarea", rows="20", cols="100") }}
+						{% for error in form.body.errors %}
+			        		<span class="uk-label uk-label-danger">{{ error }}</span>
+			    		{% endfor %}
+					</div>
+					
+			    	<div class="uk-width-1-1">
+						{{ form.recaptcha }}
+					</div>
+					<div class="uk-width-1-4@s uk-margin-small">
+						<input class="uk-button uk-button-primary" type="submit" value="Ask">
+					</div>
+				</form>
+			</div>
+			{% else %}
+			<p class="uk-text-large">
+				Minute.tech is an on-demand, high quality technical support line for the average tech user at home.<br>  We can assist on issues all over the tech spectrum from online accounts, computers, smart phones, software and more. Currently we are going through testing, and taking potential clients.
+			</p>
+			</div>
+			</div>
+			</div>
+			{% endif %}
+			</div>
 			
 			
 		</div>
