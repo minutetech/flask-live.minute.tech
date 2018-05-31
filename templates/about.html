@@ -5,11 +5,11 @@
 	 <section class="uk-section uk-section-large uk-background-cover uk-background-fixed uk-background-bottom-center" 
 				style="padding-top: 50px; background-image: url({{ url_for('static', filename='images/SF_landing_color-blur.png')}}">
 			
-			<div class="uk-container uk-background-muted uk-padding-large uk-padding-remove-top uk-align-center">
+			<div class="uk-container uk-container-small uk-background-muted uk-align-center">
 				<div class="uk-padding uk-margin-auto" >
 					<div class="uk-text-center">
-					<img class="uk-border-circle" alt="minute.tech-logo" src="{{ url_for('static', filename='images/Icon_1000x1000px.png')}}" style="max-width: 40%; height: auto;" >
-				</div>
+						<img class="uk-border-circle" alt="minute.tech-logo" src="{{ url_for('static', filename='images/Icon_1000x1000px.png')}}" style="max-width: 40%; height: auto;" >
+					</div>
 					<h1 class="uk-heading-primary"><b>About Minute.tech</b></h1>
 					<hr>
 					<p class="uk-text uk-dropcap"><img alt="computer" src="{{ url_for('static', filename='flat-icons/025-computer.png')}}" style="max-width:150px; float:right; padding: 15px;" uk-scrollspy="cls: uk-animation-fade; repeat: true">Since the invention of the personal computer in 1975, the daily prevalence of these mechanical minds have grown exponentially to unforeseen heights.  Just like the motorized vehicle has changed our means of transportation, the personal computer has revolutionized the way people live, work, communicate, entertain, and educate; affecting every facet of people’s lives.  It should not be surprising that computers are more efficient than traditional methods of completing many tasks. However, the rate at which these innovations are evolving outpaces most individuals’ understanding of how to utilize each device, available software, and existing services. This creates a psychological barrier and an excuse to shy away from realizing the potential of these technological advances. In addition, they are denied the opportunity of exploring new products and services simply due to unfamiliar and frustrating interfaces.</p>
@@ -29,89 +29,10 @@
 						<br><br><br>
 						<img alt="plant" src="{{ url_for('static', filename='flat-icons/plant.png')}}" style="max-width:75px; float: left; padding-right: 15px;" uk-scrollspy="cls: uk-animation-fade; repeat: true">
 						Investment opportunties email <a href="mailto:contact@minute.tech">contact@minute.tech</a>.
+						<br>
+						<br>
+						<br>
 					</p>
-					
-					<!-- <br>
-					<h1 class="uk-heading-primary"><b>Team</b></h1>
-					<hr>
-					<div class="uk-child-width-1-4@s" uk-grid>
-						 These need to collapse to one colomn on mobile
-					    <div>
-					        <div class="uk-card uk-card-default">
-					            <div class="uk-card-media-top">
-					                <img src="{{ url_for('static', filename='images/team/Douglas-James.png')}}" alt="" >
-					            </div>
-					            <div class="uk-card-body">
-					                <h3 class="uk-card-title">Douglas James</h3>
-					                <p>Founder &amp; CEO <br>
-					                <a href="https://www.linkedin.com/in/douglasrcjames/" uk-icon="icon: linkedin" target="_blank"></a>&nbsp;&nbsp;&nbsp; 
-					                <a href="https://twitter.com/douglasrcjames" uk-icon="icon: twitter" target="_blank"></a>&nbsp;&nbsp;&nbsp;
-					                <a href="https://www.instagram.com/douglasrcjames/?hl=en" uk-icon="icon: instagram" target="_blank"></a>
-					                </p>
-					                
-					              
-					            </div>
-					        </div>
-					    </div>
-					    <div>
-					    	<div class="uk-card uk-card-default">
-					            <div class="uk-card-body">
-					                <h3 class="uk-card-title">Ryan Wall</h3>
-					                <p>Graphic Designer <br>
-					                <a href="https://www.linkedin.com/in/ryan-wall-287837132/" uk-icon="icon: linkedin" target="_blank"></a>&nbsp;&nbsp;&nbsp; 
-					                <a href="https://twitter.com/ryan_wall95" uk-icon="icon: twitter" target="_blank"></a>&nbsp;&nbsp;&nbsp;
-					                <a href="https://www.instagram.com/mynameisryanwall/?hl=en" uk-icon="icon: instagram" target="_blank"></a>
-					                </p>
-					            </div>
-					            <div class="uk-card-media-bottom">
-					                <img src="{{ url_for('static', filename='images/team/Ryan-Wall.jpg')}}" alt="">
-					            </div>
-					        </div>
-					    </div>
-					    <div>
-					    	<div class="uk-card uk-card-default">
-					            <div class="uk-card-media-bottom">
-					                <img src="{{ url_for('static', filename='images/team/Mitch-Licata.JPG')}}" alt="">
-					            </div>
-					            <div class="uk-card-body">
-					                <h3 class="uk-card-title">Mitch Licata</h3>
-					                <p>Graphic Designer <br>
-					                <a href="https://www.linkedin.com/in/mitch-licata-14641692/" uk-icon="icon: linkedin" target="_blank"></a>&nbsp;&nbsp;&nbsp; 
-					                <a href="https://twitter.com/MitchellJames68" uk-icon="icon: twitter" target="_blank"></a>&nbsp;&nbsp;&nbsp;
-					                <a href="https://www.instagram.com/mitch_licata/?hl=en" uk-icon="icon: instagram" target="_blank"></a>
-					                </p>
-					            </div>
-					        </div>
-					    </div>
-					    <div>
-					    	<div class="uk-card uk-card-default">
-					            <div class="uk-card-body">
-					                <h3 class="uk-card-title">Nathan Elkind</h3>
-					                <p>Media Production <br>
-					                <a href="https://www.linkedin.com/in/nathan-a-elkind/" uk-icon="icon: linkedin" target="_blank"></a>&nbsp;&nbsp;&nbsp; 
-					                <a href="https://twitter.com/ElkindNathan" uk-icon="icon: twitter" target="_blank"></a>&nbsp;&nbsp;&nbsp;
-					                <a href="https://www.instagram.com/natee3xc/?hl=en" uk-icon="icon: instagram" target="_blank"></a>
-					                </p>
-					            </div>
-					            <div class="uk-card-media-bottom">
-					                <img src="{{ url_for('static', filename='images/team/Nathan-Elkind.JPG')}}" alt="">
-					            </div>
-					        </div>
-					    </div>
-					    <div>
-					    	<div class="uk-card uk-card-default">
-					    		<div class="uk-card-media-top">
-					                <img src="{{ url_for('static', filename='images/team/Douglas-James.png')}}" alt="">
-					            </div>
-					            <div class="uk-card-body">
-					                <h3 class="uk-card-title">Ana Campos</h3>
-					                <p>Public Relations</p>
-					            </div> 
-					        </div>
-					    </div>
-					</div>
-					<br> -->
-					
 				</div>
 			</div>
 
@@ -130,7 +51,7 @@
 	<!-- SECTION 5 -->
 
 	<section class="uk-section uk-section-large uk-background-cover uk-background-fixed uk-background-bottom" 
-			style="background-image: url({{ url_for('static', filename='images/contact-hello.png')}});">
+			style="background-image: url({{ url_for('static', filename='images/contact-hello-color-blur-1200px.png')}});">
 		<div class="uk-container uk-container-small uk-margin-small">
 			<div class="uk-card uk-card-secondary uk-card-hover uk-card-body uk-light" uk-scrollspy="cls: uk-animation-shake; repeat: true"> 
 				<div class="uk-text-center">
