@@ -240,6 +240,7 @@ def about():
 	try:
 		form = ContactForm(request.form)
 		if request.method == "POST" and form.validate():
+			user = 'none'
 			message = form.message.data
 			# If user is logged in, set email to their email, otherwise, empty (on html side)
 			email = form.email.data

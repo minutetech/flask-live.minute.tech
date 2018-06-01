@@ -100,6 +100,6 @@ CREATE TABLE contact(
 contact_id BIGINT UNSIGNED AUTO_INCREMENT,
 uid BIGINT UNSIGNED,
 email VARCHAR(255),
-user VARCHAR(20),
+user VARCHAR(20) DEFAULT 'none',
 message TEXT, 
 PRIMARY KEY (contact_id));
