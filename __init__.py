@@ -1433,6 +1433,29 @@ def email_verify(token):
 				return redirect(url_for('account'))
 
 			elif session['logged_in'] == 'tech':
+				flash(u'You are currently logged into your technician account. Please logout, login to your client account, and try the verify link from your email again.', 'danger')
+				return redirect(url_for('techaccount'))
+			
+		else:
+			flash(u'Log in first, then click the verification link from your email again.', 'danger')
+			return redirect(url_for('login'))
+
+		render_template("main.html")
+	except SignatureExpired:
+		flash(u'The token has expired', 'danger')
+		return redirect(url_for('homepage'))
+
+@app.route('/techemail_verify/<token>')
+def techemail_verify(token):
+	try:
+		c, conn = connection()
+		if 'logged_in' in session:
+			email = s.loads(token, salt='techemail-confirm', max_age=3600)
+			if session['logged_in'] == 'client':
+				flash(u'You are currently logged into your client account. Please logout, login to your technician account, and try the verify link from your email again.', 'danger')
+				return redirect(url_for('account'))
+
+			elif session['logged_in'] == 'tech':
 				tid = session['techtid']
 				c.execute("UPDATE tpersonals SET email_verify = 1 WHERE tid = (%s)", (tid,))
 				conn.commit()
@@ -1442,7 +1465,7 @@ def email_verify(token):
 				return redirect(url_for('techaccount'))
 			
 		else:
-			flash(u'Log in first, then click the verification link from your email again.', 'danger')
+			flash(u'Log in first, then click the verify link from your email again.', 'danger')
 			return redirect(url_for('login'))
 
 		render_template("main.html")
@@ -1519,9 +1542,9 @@ def tech_register_page():
 				#change this when the server goes live to the proper folder
 				session['techprof_pic'] = default_prof_pic
 				# Send confirmation email
-				token = s.dumps(techemail, salt='email-confirm')
+				token = s.dumps(techemail, salt='techemail-confirm')
 				msg = Message("Minute.tech - Email Verification", sender = "admin@minute.tech", recipients=[techemail])
-				link = url_for('email_verify', token=token, _external=True)
+				link = url_for('techemail_verify', token=token, _external=True)
 				msg.body = render_template('techemail_verify.txt', link=link, first_name=techfirst_name)
 				msg.html = render_template('techemail_verify.html', link=link, first_name=techfirst_name)
 				mail.send(msg)
