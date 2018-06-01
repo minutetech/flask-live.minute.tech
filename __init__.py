@@ -256,7 +256,7 @@ def about():
 
 			# Throw data in database
 			c, conn = connection()
-			c.execute("INSERT INTO contact (message, email, uid, user) VALUES (%s, %s, %s)", (message, email, uid, user))
+			c.execute("INSERT INTO contact (message, email, uid, user) VALUES (%s, %s, %s, %s)", (message, email, uid, user))
 			conn.commit()
 			c.close()
 			conn.close()
