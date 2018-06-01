@@ -247,13 +247,15 @@ def about():
 			# Get user ID
 			if 'logged_in' in session:
 				if session['logged_in'] == 'client':
+					user = 'client'
 					uid = session['clientcid']
 				if session['logged_in'] == 'tech':
+					user = 'tech'
 					uid = session['techtid']
 
 			# Throw data in database
 			c, conn = connection()
-			c.execute("INSERT INTO contact (message, email, uid) VALUES (%s, %s, %s)", (message, email, uid))
+			c.execute("INSERT INTO contact (message, email, uid, user) VALUES (%s, %s, %s)", (message, email, uid, user))
 			conn.commit()
 			c.close()
 			conn.close()
@@ -1608,4 +1610,4 @@ def file_downloads():
 ############################################ END ACCOUNT SYSTEM #########################################################
 
 if __name__ == "__main__":
-	app.run(debug=True)
+	app.run(debug=False)

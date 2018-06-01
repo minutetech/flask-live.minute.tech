@@ -100,25 +100,6 @@ CREATE TABLE contact(
 contact_id BIGINT UNSIGNED AUTO_INCREMENT,
 uid BIGINT UNSIGNED,
 email VARCHAR(255),
+user VARCHAR(20),
 message TEXT, 
 PRIMARY KEY (contact_id));
-
-
-
-
--->tags will be seperated by commas, just parse through them
--->"pending", client would decide if question is answered
--->"room" feature would just be the "ticket room", and would share the qid
--->In Python, execute INSERT to create a new response in the thread of conversation
--->could store messages, calls, pictures, video, etc (eventually) 
--->INSERT INTO thread (thrid, qid, cid, body, , , , ,)
--->VALUES (value1, value2, value3, ...);
-
--->Then in Django, iterate through each of the threads assigned to the qid, and print them out in a FOR loop
--->The answer bit is set that specific thread statement as the answer
-
--->Currently the prof_pic BLOB is just holding the URL
-
-
--->change the default layout of the entries
-$ SELECT * FROM sometable\G
