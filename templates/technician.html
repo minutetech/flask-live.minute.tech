@@ -7,11 +7,14 @@
 	<section class="uk-section uk-section-large uk-background-cover uk-background-fixed uk-background-top-center" style="padding-top: 50px;background-image: url({{ url_for('static', filename='images/black-tie-technician_color_blur.png')}});">
 		<div class="uk-container uk-container-small uk-text-center uk-padding uk-padding-remove-top">
 			<div class="uk-card uk-card-secondary uk-card-hover uk-card-body uk-light" uk-scrollspy="cls: uk-animation-scale-down; repeat: true"> 
-				<img alt="key hole" src="{{ url_for('static', filename='flat-icons/support.png')}}" style="max-width:175px;" >
+				<img class="uk-visible@m" alt="key hole" src="{{ url_for('static', filename='flat-icons/support.png')}}" style="max-width:175px;">
+				<img class="uk-hidden@m" alt="key hole" src="{{ url_for('static', filename='flat-icons/support.png')}}" style="max-width:125px;">
 				<h1 class="uk-heading-primary"><span><b>Technician material?</b></span></h1>
 				<hr>
-				<p class="uk-text-large" style="color:white">
-				   Have some free time and plenty of tech IQ? Earn more than an Uber driver by answering tech questions as a Minute.technician from the comfort of your computer. We are now taking in our first set of technicians to begin answering client questions across the tech spectrum. <br>Questions may include: "How do I reset my router?" to "How do I turn off location services on iPhone X?". If you are interested in assisting customers across the globe via messenger, voice call, video call, remote connection, or in-person, <b>sign up below</b> to see if you qualify!
+				<p class="uk-text-large uk-visible@m" style="color:white">
+				   Have some free time and plenty of tech IQ? Earn more than an Uber driver by answering tech questions as a Minute.technician from the comfort of your computer. We are now taking in our first set of technicians to begin answering client questions across the tech spectrum. Questions may include: "How do I reset my router?" to "How do I turn off location services on iPhone X?". If you are interested in assisting customers across the globe via messenger, voice call, video call, remote connection, or in-person, <b>sign up below</b> to see if you qualify!</p>
+				<p class="uk-hidden@m" style="color:white; font-size: 18px;">
+				   Have some free time and plenty of tech IQ? Earn more than an Uber driver by answering tech questions as a Minute.technician from the comfort of your computer. We are now taking in our first set of technicians to begin answering client questions across the tech spectrum. Questions may include: "How do I reset my router?" to "How do I turn off location services on iPhone X?". If you are interested in assisting customers across the globe via messenger, voice call, video call, remote connection, or in-person, <b>sign up below</b> to see if you qualify!</p>
 			</div>
 		</div>
 		<div class="uk-container uk-container-small">

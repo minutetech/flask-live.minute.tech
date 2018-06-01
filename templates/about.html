@@ -6,20 +6,21 @@
 				style="padding-top: 50px; background-image: url({{ url_for('static', filename='images/SF_landing_color-blur.png')}}">
 			
 			<div class="uk-container uk-container-small uk-background-muted uk-align-center">
-				<div class="uk-padding uk-margin-auto">
+				<div class="uk-padding uk-margin-auto" style="font-size: 18px;">
 					<div class="uk-text-center">
-						<img alt="Minute.tech Logo" src="{{ url_for('static', filename='images/Icon_1000x1000px.png')}}"style="max-width:200px;" uk-scrollspy="cls: uk-animation-fade; repeat: true">
+						<img class="uk-visible@m" alt="Minute.tech Logo" src="{{ url_for('static', filename='images/Icon_1000x1000px.png')}}"style="max-width:200px;" uk-scrollspy="cls: uk-animation-fade; repeat: true">
+						<img class="uk-hidden@m" alt="Minute.tech Logo" src="{{ url_for('static', filename='images/Icon_1000x1000px.png')}}"style="max-width:150px;" uk-scrollspy="cls: uk-animation-fade; repeat: true">
 					</div>
 					
 					
 					<h1 class="uk-heading-primary uk-text-center"><b>About Minute.tech</b></h1>
 					<hr>
-					<p class="uk-text"><img alt="computer" src="{{ url_for('static', filename='flat-icons/025-computer.png')}}" style="max-width:150px; float:right; padding: 15px;" uk-scrollspy="cls: uk-animation-fade; repeat: true">Since the invention of the personal computer in 1975, the daily prevalence of these mechanical minds have grown exponentially to unforeseen heights.  Just like the motorized vehicle has changed our means of transportation, the personal computer has revolutionized the way people live, work, communicate, entertain, and educate; affecting every facet of people’s lives.  It should not be surprising that computers are more efficient than traditional methods of completing many tasks. However, the rate at which these innovations are evolving outpaces most individuals’ understanding of how to utilize each device, available software, and existing services. This creates a psychological barrier and an excuse to shy away from realizing the potential of these technological advances. In addition, they are denied the opportunity of exploring new products and services simply due to unfamiliar and frustrating interfaces.</p>
-					<p class="uk-text">
+					<p><img alt="computer" src="{{ url_for('static', filename='flat-icons/025-computer.png')}}" style="max-width:150px; float:right; padding: 15px;" uk-scrollspy="cls: uk-animation-fade; repeat: true">Since the invention of the personal computer in 1975, the daily prevalence of these mechanical minds have grown exponentially to unforeseen heights.  Just like the motorized vehicle has changed our means of transportation, the personal computer has revolutionized the way people live, work, communicate, entertain, and educate; affecting every facet of people’s lives.  It should not be surprising that computers are more efficient than traditional methods of completing many tasks. However, the rate at which these innovations are evolving outpaces most individuals’ understanding of how to utilize each device, available software, and existing services. This creates a psychological barrier and an excuse to shy away from realizing the potential of these technological advances. In addition, they are denied the opportunity of exploring new products and services simply due to unfamiliar and frustrating interfaces.</p>
+					<p>
 					The Minute.tech system was conceptualized at San Jose State University, CA by <a href="https://www.linkedin.com/in/douglasrcjames/" target="_blank">Douglas James</a> in early 2016 to facilitate his parents eagerness to learn the power of technology while he was studying computer engineering. Three months after inception, Minute.tech was entered into the Silicon Valley Business Plan Competition and placed 3rd out of ~80 teams, awarding the project $1500. Simply put, the idea is to bridge the tech knowledge gap between users across the tech spectrum, connecting non-techie users (like mom) to the techie users (like a computer engineering student). If you know someone who needs to get their tech to start working for <i>them</i>, tell them about Minute.tech! Feel free to use the contact form at the bottom of this page if you have any questions or feedback.<img alt="podium" src="{{ url_for('static', filename='flat-icons/003-podium.png')}}" style="max-width:150px; float: right;padding: 15px;" uk-scrollspy="cls: uk-animation-fade; repeat: true">
 					</p>
 
-					<p class="uk-text">
+					<p>
 					Minute.tech will use a rating system to give the best experience to both the technician and the client. Clients and Minute technicians will be worldwide, connected via messenger, voice call, video call, remote-control, or in-person.  Minute technicians will be taking on tasks such as reinstalling an operating system or suggesting the best course of action for a broken device. Technicians will pass off calls in the case that there may be another technician better suited to answer that question. If you are interested in becoming a Minute technician, <a href="/technician/">sign up today</a>!
 					<br>
 					<!-- <br>
@@ -28,7 +29,7 @@
 					
 					</p>
 					<hr>
-					<p class="uk-text">
+					<p>
 					 	<img alt="magnifying-glass" src="{{ url_for('static', filename='flat-icons/worker.png')}}" style="max-width:75px; float: left; padding-right: 15px;" uk-scrollspy="cls: uk-animation-fade; repeat: true">
 						The Minute.tech team is small, and we are actively looking for ambitious team members, please contact <a href="mailto:jobs@minute.tech">jobs@minute.tech</a> if interested.
 						<br><br><br>
