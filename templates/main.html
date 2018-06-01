@@ -16,7 +16,7 @@
 						{% if session.logged_in != 'tech' %}
 
 						<p class="uk-text-large">
-							Minute.tech is an on-demand, high quality technical support line for the average tech user at home.<br>  We can assist on issues all over the tech spectrum from online accounts, computers, smart phones, software and more. Currently we are going through testing, and taking potential clients. 
+							Minute.tech is an on-demand, high quality technical support line for the average tech user at home. We can assist on issues all over the tech spectrum from online accounts, computers, smart phones, software and more. Currently we are going through testing, and taking potential clients. 
 							<br><b>Ask something below</b> to get started!
 						</p>
 					</div>
@@ -67,7 +67,7 @@
 		</div>
 		<br>
 		<div class="uk-container uk-container-small uk-text-center uk-padding-large">
-			<div class="uk-text-center" uk-grid uk-scrollspy="cls: uk-animation-fade; target: > div > .uk-card; delay: 62.5; repeat: true">
+			<div class="uk-text-center uk-grid-match" uk-grid uk-scrollspy="cls: uk-animation-fade; target: > div > .uk-card; delay: 62.5; repeat: true">
 				<div class="uk-width-1-2@s">
 			        <div class="uk-card uk-card-default uk-card-body">
 			        	<img alt="key hole" src="{{ url_for('static', filename='flat-icons/005-shield.png')}}" style="max-width:75px;" >
@@ -108,6 +108,16 @@
 			        	<img alt="Everything" src="{{ url_for('static', filename='flat-icons/motherboard.png')}}" style="max-width:75px;" >
 			            <h3 class="uk-card-title">Everything</h3>
 			            <p>Yes, that's right, we can help you with almost everything tech. We can help with fixing your internet or setting up a new gaming computer</p>
+			        </div>
+			    </div>
+			    <div class="uk-width-1-1">
+			    	<div class="uk-card uk-card-default uk-card-body">
+			        	<img alt="Technician" src="{{ url_for('static', filename='flat-icons/support.png')}}" style="max-width:75px;" >
+			            <h3 class="uk-card-title">Tech savvy?</h3>
+			            <p>We are currently recruiting for a team of Minute.technicians. If you are interested in assisting customers with their tech questions across the globe via messenger, voice call, video call, remote connection, or in-person, <a href="/technician/">sign up now to see if you qualify</a>!
+			            <br><br>
+						<a href="/technician/"><button class="uk-button uk-button-primary">Sign up</button></a>
+			            </p>
 			        </div>
 			    </div>
 			</div>
