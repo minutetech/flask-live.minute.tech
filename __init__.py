@@ -55,7 +55,7 @@ def test():
 	try:
 		c, conn = connection()
 		if request.method == "POST":
-			msg = Message("Email Verification", sender = "Minute.tech", recipients=[session['email']])
+			msg = Message("Email Verification", sender = ("Minute.tech", "hello@minute.tech"), recipients=[session['email']])
 			msg.body = render_template('email_verify.txt')
 			msg.html = render_template('email_verify.html')
 			mail.send(msg)
@@ -110,7 +110,7 @@ def homepage():
 			c.close()
 			conn.close()
 			flash(u'Your question has been added to the system under the email on file.', 'success')
-			msg = Message("Question Recieved", sender = "Minute.tech", recipients=[email])
+			msg = Message("Question Recieved", sender = ("Minute.tech", "hello@minute.tech"), recipients=[email])
 			msg.body = render_template('question_recieved.txt')
 			msg.html = render_template('question_recieved.html')
 			mail.send(msg)
@@ -148,7 +148,7 @@ def homepage():
 			c.close()
 			conn.close()
 			token = s.dumps(email, salt='email-confirm')
-			msg = Message("Email Verification", sender = "Minute.tech", recipients=[email])
+			msg = Message("Email Verification", sender = ("Minute.tech", "hello@minute.tech"), recipients=[email])
 			link = url_for('email_verify', token=token, _external=True)
 			msg.body = render_template('email_verify_with_password.txt', link=link, password=password, first_name=first_name)
 			msg.html = render_template('email_verify_with_password.html', link=link, password=password, first_name=first_name)
@@ -186,7 +186,7 @@ def technician():
 			c.close()
 			conn.close()
 			flash(u'Your response has been recieved and we will get back to you soon.', 'success')
-			msg = Message("Response recieved", sender = "Minute.tech", recipients=[email])
+			msg = Message("Response recieved", sender = ("Minute.tech", "hello@minute.tech"), recipients=[email])
 			msg.body = render_template('techresponse.txt')
 			msg.html = render_template('techresponse.html')
 			mail.send(msg)
@@ -218,7 +218,7 @@ def technician():
 			conn.close()
 			flash(u'Your response was recieved and an account verification email was sent.', 'success')
 			token = s.dumps(email, salt='techemail-confirm')
-			msg = Message("Email Verification", sender = "Minute.tech", recipients=[email])
+			msg = Message("Email Verification", sender = ("Minute.tech", "hello@minute.tech"), recipients=[email])
 			link = url_for('techemail_verify', token=token, _external=True)
 			msg.body = render_template('techemail_verify_with_password.txt', link=link, password=password, first_name=first_name)
 			msg.html = render_template('techemail_verify_with_password.html', link=link, password=password, first_name=first_name)
@@ -1327,7 +1327,7 @@ def fforgot_password():
 		# Send confirmation email
 		f_email = request.form['f_email']
 		token = s.dumps(email, salt='forgot-password')
-		msg = Message("Forgot Password", sender = "Minute.tech", recipients=[f_email])
+		msg = Message("Forgot Password", sender = ("Minute.tech", "hello@minute.tech"), recipients=[f_email])
 		link = url_for('forgot_password', token=token, _external=True)
 		msg.body = render_template('forgot_password-email.txt', link=link, first_name=first_name)
 		msg.html = render_template('forgot_password-email.html', link=link, first_name=first_name)
@@ -1406,7 +1406,7 @@ def register_page():
 
 				# Send confirmation email
 				token = s.dumps(email, salt='email-confirm')
-				msg = Message("Email Verification", sender = "Minute.tech", recipients=[email])
+				msg = Message("Email Verification", sender = ("Minute.tech", "hello@minute.tech"), recipients=[email])
 				link = url_for('email_verify', token=token, _external=True)
 				msg.body = render_template('email_verify.txt', link=link, first_name=first_name)
 				msg.html = render_template('email_verify.html', link=link, first_name=first_name)
@@ -1546,7 +1546,7 @@ def tech_register_page():
 				session['techprof_pic'] = default_prof_pic
 				# Send confirmation email
 				token = s.dumps(techemail, salt='techemail-confirm')
-				msg = Message("Email Verification", sender = "Minute.tech", recipients=[techemail])
+				msg = Message("Email Verification", sender = ("Minute.tech", "hello@minute.tech"), recipients=[techemail])
 				link = url_for('techemail_verify', token=token, _external=True)
 				msg.body = render_template('techemail_verify.txt', link=link, first_name=techfirst_name)
 				msg.html = render_template('techemail_verify.html', link=link, first_name=techfirst_name)
@@ -1611,4 +1611,4 @@ def file_downloads():
 ############################################ END ACCOUNT SYSTEM #########################################################
 
 if __name__ == "__main__":
-	app.run(debug=False)
+	app.run(debug=True)
